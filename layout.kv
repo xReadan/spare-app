@@ -1,0 +1,224 @@
+<DrawerClickableItem@MDNavigationDrawerItem>
+    focus_color: "#232D3F"
+    text_color: "#008170"
+    icon_color: "#008170"
+    ripple_color: "#c5bdd2"
+    selected_color: "#005B41"
+
+<MDNavigationDrawerLabel@MDNavigationDrawerItem>
+    md_bg_color: "#005B41"
+    padding: [12, 6, 12, 6]
+    margin: [0, 0, 0, 6]
+    radius: 12
+    spacing: "4dp"
+
+<ContentNavigationDrawer>
+    MDNavigationDrawerMenu:
+        MDNavigationDrawerHeader:
+            id: menu_header
+            title: ""
+            title_color: "#008170"
+            text: ""
+            text_color: "#005B41"
+            spacing: "4dp"
+            padding: "12dp", 0, 0, "12dp"
+
+        MDNavigationDrawerDivider:
+
+        MDNavigationDrawerLabel:
+            text: "Home"
+        DrawerClickableItem:
+            icon: "view-dashboard"
+            text: "Dashboard"
+            on_press:
+                root.nav_drawer.set_state("close")
+                root.screen_manager.current = 'dashboard'
+        DrawerClickableItem:
+            icon: "cart"
+            text: "Add Expense"
+            on_press:
+                root.nav_drawer.set_state("close")
+                root.screen_manager.current = 'add-expenses'
+        
+        MDNavigationDrawerDivider:
+
+        MDNavigationDrawerLabel:
+            text: "Manage"
+        DrawerClickableItem:
+            icon: "shape"
+            text: "Manage Categories"
+            on_press:
+                root.nav_drawer.set_state("close")
+                root.screen_manager.current = 'manage-categories'
+        DrawerClickableItem:
+            icon: "cash-multiple"
+            text: "Manage Incomes"
+            on_press:
+                root.nav_drawer.set_state("close")
+                root.screen_manager.current = 'manage-incomes'
+        DrawerClickableItem:
+            icon: "finance"
+            text: "Check Expenses"
+            on_press:
+                root.nav_drawer.set_state("close")
+                root.screen_manager.current = 'check-expenses'
+
+        MDNavigationDrawerDivider:
+
+        DrawerClickableItem:
+            icon: "logout"
+            text: "Logout"
+            on_press:
+                root.nav_drawer.set_state("close")
+                app.logout()
+
+<PasswordField>
+    size_hint_y: None
+    height: password.height
+    MDTextField:
+        id: password
+        hint_text: root.hint_text
+        text: root.text
+        password: True
+        icon_left: "key-variant"
+
+    MDIconButton:
+        icon: "eye-off"
+        pos_hint: {"center_y": .5}
+        pos: password.width - self.width + dp(8), 0
+        on_release:
+            self.icon = "eye" if self.icon == "eye-off" else "eye-off"
+            password.password = False if password.password is True else True
+
+MDScreen:
+    MDLabel:
+        id: notification_text
+        text: ""
+        halign: "center"
+        y: 200
+        color: "#008170"
+        font_name: "Quicksand"
+        font_size: 24
+
+    MDScreenManager:
+        id: root_screen_manager
+
+        MDScreen:
+            name: "login"
+            MDRelativeLayout:
+                size_hint_x: None
+                width: "300dp"
+                pos_hint: {"center_x": .5, "center_y": .5}
+                MDTextField:
+                    id: login_user
+                    icon_left: "account"
+                    pos_hint: {"center_x": .5, "center_y": .60}
+                    hint_text: "Username"
+            PasswordField:
+                id: login_password
+                size_hint_x: None
+                width: "300dp"
+                hint_text: "Password"
+                pos_hint: {"center_x": .5, "center_y": .50}
+            MDRaisedButton:
+                font_name: "Quicksand"
+                text: "Login"
+                pos_hint: {"center_x": .5, "center_y": .40}
+                on_press:
+                    app.run_login()
+            MDRaisedButton:
+                font_name: "Quicksand"
+                text: "Signup"
+                pos_hint: {"center_x": .5, "center_y": .30}
+                on_press:
+                    root_screen_manager.current = 'signup'
+
+        MDScreen:
+            name: "signup"
+            MDRelativeLayout:
+                size_hint_x: None
+                width: "300dp"
+                pos_hint: {"center_x": .5, "center_y": .5}
+                MDTextField:
+                    id: signup_account
+                    icon_left: "account"
+                    pos_hint: {"center_x": .5, "center_y": .65}
+                    hint_text: "Username"
+                MDTextField:
+                    id: signup_email
+                    icon_left: "email"
+                    pos_hint: {"center_x": .5, "center_y": .55}
+                    hint_text: "Email"
+                    validator: "email"
+                    error_color: "grey"
+            PasswordField:
+                id: signup_password
+                size_hint_x: None
+                width: "300dp"
+                hint_text: "Password"
+                pos_hint: {"center_x": .5, "center_y": .45}
+            MDRaisedButton:
+                text: "Login"
+                pos_hint: {"center_x": .55, "center_y": .35}
+                on_press:
+                    root_screen_manager.transition.direction = 'right'
+                    root_screen_manager.current = 'login'
+            MDRaisedButton:
+                text: "Signup"
+                pos_hint: {"center_x": .45, "center_y": .35}
+                on_press:
+                    app.signup()
+                    root_screen_manager.transition.direction = 'right'
+        MDScreen:
+            name: "logged"
+            MDTopAppBar:
+                title: "Personal Accountability"
+                elevation: 4
+                pos_hint: {"top": 1}
+                md_bg_color: "232D3F"
+                specific_text_color: "#008170"
+                left_action_items:
+                    [['menu', lambda x: nav_drawer.set_state("open")]]
+
+            MDNavigationLayout:
+
+            MDScreenManager:
+                id: screen_manager
+
+                MDScreen:
+                    name: "dashboard"
+                    MDLabel:
+                        text: "Dashboard"
+                        halign: 'center'
+
+                MDScreen:
+                    name: "add-expenses"
+                    MDLabel:
+                        text: "Shoppa"
+                        halign: 'center'
+
+                MDScreen:
+                    name: "manage-categories"
+                    MDLabel:
+                        text: "Categories"
+                        halign: 'center'
+
+                MDScreen:
+                    name: "manage-incomes"
+                    MDLabel:
+                        text: "Incomes"
+                        halign: 'center'
+                MDScreen:
+                    name: "check-expenses"
+                    MDLabel:
+                        text: "Expenses"
+                        halign: 'center'
+
+            MDNavigationDrawer:
+                id: nav_drawer
+                radius: (0, 16, 16, 0)
+
+                ContentNavigationDrawer:
+                    screen_manager: screen_manager
+                    nav_drawer: nav_drawer
+                    id: main_menu
