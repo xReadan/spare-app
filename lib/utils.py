@@ -66,6 +66,25 @@ def check_user(app: MDApp, user_dict: dict) -> bool:
         return True
     return False
 
+def save_expense(app: MDApp, expense: float, date: str) -> None:
+    """Given the app with all user's information and an expense, store it
+
+    Args:
+        app (MDApp): The app object
+        expense (float): The amount of the expense
+    """
+    if app.user is not None:
+        query = f"""
+            INSERT INTO expenses (date, amount, user_id, recurring)
+            VALUES('{date}','{expense}','{app.user[0]}', 0)
+        """
+        try:
+            app.cursor.execute(query)
+            app.conn.commit()
+            # Go to login page
+            return True
+        except Exception:
+            return False
 
 def form_validator(form_inputs: dict) -> str:
     """Given a dict of inputs, check if they are empty and return erros

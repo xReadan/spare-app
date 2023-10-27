@@ -16,9 +16,9 @@
     MDNavigationDrawerMenu:
         MDNavigationDrawerHeader:
             id: menu_header
-            title: ""
+            title: app.user[2]
             title_color: "#008170"
-            text: ""
+            text: app.user[1]
             text_color: "#005B41"
             spacing: "4dp"
             padding: "12dp", 0, 0, "12dp"
@@ -187,15 +187,55 @@ MDScreen:
 
                 MDScreen:
                     name: "dashboard"
-                    MDLabel:
-                        text: "Dashboard"
-                        halign: 'center'
+                    MDGridLayout:
+                        cols: 1
+                        rows: 3
+                        adaptive_height: True
+                        pos_hint: {"center_x": 0.5, "center_y": 0.5}
+                        size_hint_x: 0.8
+                        md_bg_color: "232D3F"
+                        MDLabel:
+                            text: "Remaining Budget"
+                            font_name: "Quicksand"
+                            halign: "center"
+                            size_hint_y: None
+                            height: 50
+                            font_style: "H5"
+                        MDLabel:
+                            text: app.budget
+                            font_name: "Quicksand"
+                            size_hint_y: None
+                            height: 150
+                            halign: "center"
+                            font_style: "H2"
+                        MDRaisedButton:
+                            text: "Add Expense"
+                            size_hint_x: 0.5
+                            on_press:
+                                screen_manager.current = 'add-expenses'
 
                 MDScreen:
                     name: "add-expenses"
-                    MDLabel:
-                        text: "Shoppa"
-                        halign: 'center'
+                    MDGridLayout:
+                        cols: 1
+                        rows: 2
+                        adaptive_height: True
+                        pos_hint: {"center_x": 0.5, "center_y": 0.5}
+                        size_hint_x: 0.8
+                        md_bg_color: "232D3F"
+                        padding: [12,6,12,12]
+                        MDTextField:
+                            id: expense_amount
+                            icon_right: "cash-fast"
+                            pos_hint: {"center_x": .5, "center_y": .60}
+                            hint_text: "Expense Amount"
+                            helper_text_mode: "persistent"
+                            input_filter: "float"
+                        MDRaisedButton:
+                            text: "Add Expense"
+                            size_hint_x: 0.5
+                            on_press:
+                                app.store_expense()
 
                 MDScreen:
                     name: "manage-categories"
