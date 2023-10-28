@@ -2,4 +2,4 @@ data.db
 logged_user.json
 .vscode/*
 **/__pycache__/**
-env/Lib/site-packages/*
+env/
