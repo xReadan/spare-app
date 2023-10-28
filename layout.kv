@@ -16,9 +16,9 @@
     MDNavigationDrawerMenu:
         MDNavigationDrawerHeader:
             id: menu_header
-            title: app.user[2]
-            title_color: "#008170"
-            text: app.user[1]
+            title: "SpareApp"
+            title_color: "#FFFFFF"
+            text: "v0.1"
             text_color: "#005B41"
             spacing: "4dp"
             padding: "12dp", 0, 0, "12dp"
@@ -32,45 +32,36 @@
             text: "Dashboard"
             on_press:
                 root.nav_drawer.set_state("close")
-                root.screen_manager.current = 'dashboard'
+                root.screen_manager.current = 'Dashboard'
         DrawerClickableItem:
             icon: "cart"
             text: "Add Expense"
             on_press:
                 root.nav_drawer.set_state("close")
-                root.screen_manager.current = 'add-expenses'
+                root.screen_manager.current = 'Add Expenses'
         
         MDNavigationDrawerDivider:
 
         MDNavigationDrawerLabel:
             text: "Manage"
         DrawerClickableItem:
-            icon: "shape"
-            text: "Manage Categories"
-            on_press:
-                root.nav_drawer.set_state("close")
-                root.screen_manager.current = 'manage-categories'
-        DrawerClickableItem:
             icon: "cash-multiple"
             text: "Manage Incomes"
             on_press:
                 root.nav_drawer.set_state("close")
-                root.screen_manager.current = 'manage-incomes'
+                app.open_manage_incomes()
+        DrawerClickableItem:
+            icon: "shape"
+            text: "Manage Categories"
+            on_press:
+                root.nav_drawer.set_state("close")
+                root.screen_manager.current = 'Manage Categories'
         DrawerClickableItem:
             icon: "finance"
             text: "Check Expenses"
             on_press:
                 root.nav_drawer.set_state("close")
-                root.screen_manager.current = 'check-expenses'
-
-        MDNavigationDrawerDivider:
-
-        DrawerClickableItem:
-            icon: "logout"
-            text: "Logout"
-            on_press:
-                root.nav_drawer.set_state("close")
-                app.logout()
+                root.screen_manager.current = 'Check Expenses'
 
 <PasswordField>
     size_hint_y: None
@@ -172,13 +163,15 @@ MDScreen:
         MDScreen:
             name: "logged"
             MDTopAppBar:
-                title: "Personal Accountability"
+                title: screen_manager.current
                 elevation: 4
                 pos_hint: {"top": 1}
                 md_bg_color: "232D3F"
                 specific_text_color: "#008170"
                 left_action_items:
                     [['menu', lambda x: nav_drawer.set_state("open")]]
+                right_action_items:
+                    [['logout', lambda x: app.logout()]]
 
             MDNavigationLayout:
 
@@ -186,7 +179,7 @@ MDScreen:
                 id: screen_manager
 
                 MDScreen:
-                    name: "dashboard"
+                    name: "Dashboard"
                     MDGridLayout:
                         cols: 1
                         rows: 3
@@ -202,7 +195,8 @@ MDScreen:
                             height: 50
                             font_style: "H5"
                         MDLabel:
-                            text: app.budget
+                            id: remaining_budget
+                            text: ""
                             font_name: "Quicksand"
                             size_hint_y: None
                             height: 150
@@ -212,10 +206,10 @@ MDScreen:
                             text: "Add Expense"
                             size_hint_x: 0.5
                             on_press:
-                                screen_manager.current = 'add-expenses'
+                                screen_manager.current = 'Add Expenses'
 
                 MDScreen:
-                    name: "add-expenses"
+                    name: "Add Expenses"
                     MDGridLayout:
                         cols: 1
                         rows: 2
@@ -238,18 +232,109 @@ MDScreen:
                                 app.store_expense()
 
                 MDScreen:
-                    name: "manage-categories"
+                    name: "Manage Incomes"
+                    ScrollView:
+                        pos_hint: {"center_x": 0.5, "center_y": 0.45}
+                        size_hint: (0.8, 0.8)
+                        MDGridLayout:
+                            cols: 1
+                            rows: 6
+                            adaptive_height: True
+                            size_hint_x: 1
+                            md_bg_color: "232D3F"
+                            MDLabel:
+                                text: "Current Income"
+                                font_name: "Quicksand"
+                                halign: "center"
+                                size_hint_y: None
+                                height: 50
+                                font_style: "H5"
+                            MDLabel:
+                                id: current_incom
+                                text: ""
+                                font_name: "Quicksand"
+                                size_hint_y: None
+                                height: 150
+                                halign: "center"
+                                font_style: "H2"
+                            MDRaisedButton:
+                                text: "Update Income"
+                                size_hint_x: 0.5
+                                on_press:
+                                    screen_manager.transition.direction = 'left'
+                                    screen_manager.current = 'Update Income'
+                            MDLabel:
+                                text: "Recurring Expenses"
+                                font_name: "Quicksand"
+                                halign: "center"
+                                size_hint_y: None
+                                height: 50
+                                font_style: "H5"
+                            MDGridLayout:
+                                id: incomes_data_layout
+                                size_hint_y: None
+                                height: 250
+                                cols: 1
+                                rows: 1
+                            MDGridLayout:
+                                cols: 2
+                                rows: 1
+                                adaptive_height: True
+                                size_hint_x: 1
+                                md_bg_color: "232D3F"
+                                MDRaisedButton:
+                                    text: "Remove Selected"
+                                    size_hint_x: 0.5
+                                    on_press:
+                                        screen_manager.current = 'Add Expenses'
+                                MDRaisedButton:
+                                    text: "Add new"
+                                    size_hint_x: 0.5
+                                    on_press:
+                                        screen_manager.current = 'Add Expenses'
+                MDScreen:
+                    name: "Update Income"
+                    MDGridLayout:
+                        cols: 1
+                        rows: 2
+                        adaptive_height: True
+                        pos_hint: {"center_x": 0.5, "center_y": 0.5}
+                        size_hint_x: 0.8
+                        md_bg_color: "232D3F"
+                        padding: [12,6,12,12]
+                        MDTextField:
+                            id: update_income
+                            icon_right: "cash-fast"
+                            pos_hint: {"center_x": .5, "center_y": .60}
+                            hint_text: "Type Your Income"
+                            helper_text_mode: "persistent"
+                            input_filter: "float"
+                            text: ""
+                        MDGridLayout:
+                            cols: 2
+                            rows: 1
+                            adaptive_height: True
+                            size_hint_x: 1
+                            md_bg_color: "232D3F"
+                            MDRaisedButton:
+                                text: "Back"
+                                size_hint_x: 0.5
+                                on_press:
+                                    screen_manager.transition.direction = 'right'
+                                    screen_manager.current = 'Manage Incomes'
+                            MDRaisedButton:
+                                text: "Update"
+                                size_hint_x: 0.5
+                                on_press:
+                                    app.update_income()
+                MDScreen:
+                    name: "Manage Categories"
                     MDLabel:
                         text: "Categories"
                         halign: 'center'
 
                 MDScreen:
-                    name: "manage-incomes"
-                    MDLabel:
-                        text: "Incomes"
-                        halign: 'center'
-                MDScreen:
-                    name: "check-expenses"
+                    name: "Check Expenses"
                     MDLabel:
                         text: "Expenses"
                         halign: 'center'

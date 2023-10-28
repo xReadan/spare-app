@@ -1,16 +1,18 @@
 from kivymd.app import MDApp
 from kivymd.uix.boxlayout import MDBoxLayout
 from kivymd.uix.relativelayout import MDRelativeLayout
+from kivymd.uix.datatables import MDDataTable
 
+from kivy.metrics import dp
 from kivy.lang import Builder
 from kivy.properties import ObjectProperty, StringProperty
 
 from lib.db import connect_to_db
-from lib.utils import signup_user, check_login_user, check_user, save_expense
+from lib.utils import signup_user, check_login_user, check_user, save_expense, save_amount, fetch_user_data
 
 from datetime import datetime
 
-import json
+import json, time
 import os.path
 
 """
@@ -35,9 +37,16 @@ class MainApp(MDApp):
         self.conn = conn
         self.cursor = cursor
         # Init Window
-        self.title = "Hello"
+        self.title = "SpareApp"
         self.theme_cls.theme_style = "Dark"
         self.theme_cls.primary_palette = "Teal"
+        # Init info
+        self.user = None
+        self.user_data = fetch_user_data(self)
+        # Return app
+        return Builder.load_file("layout.kv")
+
+    def on_start(self):
         # Check if user is preset
         if os.path.isfile("logged_user.json"):
             with open("logged_user.json", "r") as f:
@@ -45,12 +54,8 @@ class MainApp(MDApp):
                 # Check if user exist
                 if check_user(self, user):
                     self.login(user)
-        # Create app
-        app = Builder.load_file("layout.kv")
-        if self.user:
-            # Redirect
-            app.ids["root_screen_manager"].current = "logged"
-        return app
+                    # Redirect
+                    self.root.ids.root_screen_manager.current = "logged"
 
     def signup(self):
         signup_user(self)
@@ -60,35 +65,73 @@ class MainApp(MDApp):
         if user is not None:
             self.login(user)
             # Redirect
-            self.root.ids["root_screen_manager"].current = "logged"
+            self.root.ids.root_screen_manager.current = "logged"
 
     def login(self, user):
         if user is not None:
-            self.budget = "1000€"
+            # Set user
             self.user = user
+            # Fetch and update user data
+            self.update_app_text()
 
     def logout(self):
         self.user = None
+        self.user_data = None
         if os.path.isfile("logged_user.json"):
             os.remove("logged_user.json")
-        self.root.ids["root_screen_manager"].current = "login"
+        self.root.ids.root_screen_manager.current = "login"
 
     def store_expense(self):
         # Reset text just in case of errors
         self.root.ids["notification_text"].text = ""
         # Retrieve data and parse amount
-        today = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        today = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         try:
             amount = float(self.root.ids["expense_amount"].text)
         except Exception:
-            self.root.ids["notification_text"].text = "Please enter a valide number"
+            self.root.ids.notification_text.text = "Please enter a valide number"
             return
         if save_expense(self, amount, today):
-            self.root.ids["screen_manager"].transition.direction = 'right'
-            self.root.ids["screen_manager"].current = "dashboard"
+            self.update_app_text()
+            self.root.ids.screen_manager.transition.direction = "right"
+            self.root.ids.screen_manager.current = "Dashboard"
         else:
-            self.root.ids["notification_text"].text = "Something went wrong"
+            self.root.ids.notification_text.text = "Something went wrong"
             return
+
+    def open_manage_incomes(self):
+        table = MDDataTable(
+            check=True,
+            column_data=[
+                ("Category", dp(80)),
+                ("Amount", dp(40))
+            ],
+            row_data=self.user_data["recurring_expenses"],
+        )
+        self.root.ids.incomes_data_layout.add_widget(table)
+        self.root.ids.screen_manager.current = "Manage Incomes"
+
+    def update_income(self):
+        # Reset text just in case of errors
+        self.root.ids["notification_text"].text = ""
+        try:
+            amount = float(self.root.ids.update_income.text)
+        except Exception:
+            self.root.ids.notification_text.text = "Please enter a valide number"
+            return
+        if save_amount(self, amount):
+            self.update_app_text()
+            self.root.ids.screen_manager.transition.direction = "right"
+            self.root.ids.screen_manager.current = "Manage Incomes"
+        else:
+            self.root.ids.notification_text.text = "Something went wrong"
+            return
+    
+    def update_app_text(self):
+        self.user_data = fetch_user_data(self)
+        self.root.ids.remaining_budget.text = self.user_data["budget"]
+        self.root.ids.current_incom.text = self.user_data["income"]
+        self.root.ids.remaining_budget.text = self.user_data["budget"]
 
 
 MainApp().run()
