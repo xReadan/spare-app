@@ -67,18 +67,51 @@ def check_user(app: MDApp, user_dict: dict) -> bool:
     return False
 
 
-def save_expense(app: MDApp, expense: float, date: str) -> bool:
+def save_expense(app: MDApp, expense: float, date: str, type: str) -> bool:
     """Given the app with all user's information and an expense, store it
 
     Args:
         app (MDApp): The app object
         expense (float): The amount of the expense
+        date (str): Insertion date of the expense
+        type (str): Wheter the expense is recurring or not
     """
     if app.user is not None:
+        # Check expense type
+        recurring = 1 if type == "recurring_expense" else 0
+        # Build query
         query = f"""
             INSERT INTO expenses (date, amount, user_id, recurring)
-            VALUES('{date}','{expense}','{app.user[0]}', 0)
+            VALUES('{date}','{expense}','{app.user[0]}', {recurring})
         """
+        try:
+            app.cursor.execute(query)
+            app.conn.commit()
+            # Go to login page
+            return True
+        except Exception:
+            return False
+
+
+def delete_expense(app: MDApp, ids: list, type: str) -> bool:
+    """Given a list of expenses, delete them
+
+    Args:
+        app (MDApp): The app object
+        ids (list): List of ids of expense
+        type (str): Mode of the delete
+    Returns:
+        bool: Whether the deletion was successfull or not
+    """
+    if app.user is not None:
+        if len(ids) > 0 and type == "recurring":
+            query = f"""
+                DELETE from expenses WHERE id IN ({",".join(map(str, ids))}) AND user_id = {app.user[0]}
+            """
+        elif type == "tmp":
+            query = f"""
+                DELETE from expenses WHERE user_id = {app.user[0]} AND recurring = 0
+            """
         try:
             app.cursor.execute(query)
             app.conn.commit()
@@ -136,22 +169,25 @@ def fetch_user_data(app: MDApp) -> dict:
             f"SELECT * FROM expenses WHERE user_id = {app.user[0]} AND recurring = 1"
         )
         r_expense = app.cursor.execute(r_expense_query).fetchall()
-        user_data["recurring_expenses"] = [[tmp[1], tmp[2]] for tmp in r_expense]
+        user_data["recurring_expenses"] = [
+            [tmp[0], tmp[1], tmp[2]] for tmp in r_expense
+        ]
         # Get Temp expenses
         t_expense_query = (
             f"SELECT * FROM expenses WHERE user_id = {app.user[0]} AND recurring = 0"
         )
         t_expense = app.cursor.execute(t_expense_query).fetchall()
-        user_data["temp_expenses"] = [[tmp[1], tmp[2]] for tmp in t_expense]
+        user_data["temp_expenses"] = [[tmp[0], tmp[1], tmp[2]] for tmp in t_expense]
         # Get categories
         categories_query = f"SELECT * FROM categories WHERE user_id = {app.user[0]}"
         user_data["categories"] = app.cursor.execute(categories_query).fetchall()
         # Update budget
-        recurring_sum = sum([tmp[1] for tmp in user_data["recurring_expenses"]])
-        temp_sum = sum([tmp[1] for tmp in user_data["temp_expenses"]])
+        recurring_sum = sum([tmp[2] for tmp in user_data["recurring_expenses"]])
+        temp_sum = sum([tmp[2] for tmp in user_data["temp_expenses"]])
         user_data["net_budget"] = user_data["net_income"] - (recurring_sum + temp_sum)
         user_data["budget"] = f"{user_data['net_budget']}€"
     return user_data
+
 
 def form_validator(form_inputs: dict) -> str:
     """Given a dict of inputs, check if they are empty and return erros

@@ -32,12 +32,14 @@
             text: "Dashboard"
             on_press:
                 root.nav_drawer.set_state("close")
+                root.screen_manager.transition.direction = "left"
                 root.screen_manager.current = 'Dashboard'
         DrawerClickableItem:
             icon: "cart"
             text: "Add Expense"
             on_press:
                 root.nav_drawer.set_state("close")
+                root.screen_manager.transition.direction = "left"
                 root.screen_manager.current = 'Add Expenses'
         
         MDNavigationDrawerDivider:
@@ -49,18 +51,21 @@
             text: "Manage Incomes"
             on_press:
                 root.nav_drawer.set_state("close")
-                app.open_manage_incomes()
+                root.screen_manager.transition.direction = "left"
+                root.screen_manager.current = 'Manage Incomes' 
         DrawerClickableItem:
             icon: "shape"
             text: "Manage Categories"
             on_press:
                 root.nav_drawer.set_state("close")
+                root.screen_manager.transition.direction = "left"
                 root.screen_manager.current = 'Manage Categories'
         DrawerClickableItem:
             icon: "finance"
             text: "Check Expenses"
             on_press:
                 root.nav_drawer.set_state("close")
+                root.screen_manager.transition.direction = "left"
                 root.screen_manager.current = 'Check Expenses'
 
 <PasswordField>
@@ -206,7 +211,15 @@ MDScreen:
                             text: "Add Expense"
                             size_hint_x: 0.5
                             on_press:
+                                screen_manager.transition.direction = 'left'
                                 screen_manager.current = 'Add Expenses'
+                    MDRaisedButton:
+                        text: "Reset Expenses"
+                        size_hint_x: 0.3
+                        pos_hint: {"center_x": 0.5, "center_y": 0.05}
+                        md_bg_color: "#232D3F"
+                        on_press:
+                            app.remove_expense('tmp')
 
                 MDScreen:
                     name: "Add Expenses"
@@ -229,7 +242,7 @@ MDScreen:
                             text: "Add Expense"
                             size_hint_x: 0.5
                             on_press:
-                                app.store_expense()
+                                app.store_expense('expense_amount')
 
                 MDScreen:
                     name: "Manage Incomes"
@@ -286,12 +299,13 @@ MDScreen:
                                     text: "Remove Selected"
                                     size_hint_x: 0.5
                                     on_press:
-                                        screen_manager.current = 'Add Expenses'
+                                        app.remove_expense('recurring')
                                 MDRaisedButton:
                                     text: "Add new"
                                     size_hint_x: 0.5
                                     on_press:
-                                        screen_manager.current = 'Add Expenses'
+                                        screen_manager.transition.direction = "left"
+                                        screen_manager.current = 'Add Recurring Expense'
                 MDScreen:
                     name: "Update Income"
                     MDGridLayout:
@@ -327,6 +341,41 @@ MDScreen:
                                 size_hint_x: 0.5
                                 on_press:
                                     app.update_income()
+                MDScreen:
+                    name: "Add Recurring Expense"
+                    MDGridLayout:
+                        cols: 1
+                        rows: 2
+                        adaptive_height: True
+                        pos_hint: {"center_x": 0.5, "center_y": 0.5}
+                        size_hint_x: 0.8
+                        md_bg_color: "232D3F"
+                        padding: [12,6,12,12]
+                        MDTextField:
+                            id: recurring_expense
+                            icon_right: "cash-fast"
+                            pos_hint: {"center_x": .5, "center_y": .60}
+                            hint_text: "Insert Expense"
+                            helper_text_mode: "persistent"
+                            input_filter: "float"
+                            text: ""
+                        MDGridLayout:
+                            cols: 2
+                            rows: 1
+                            adaptive_height: True
+                            size_hint_x: 1
+                            md_bg_color: "232D3F"
+                            MDRaisedButton:
+                                text: "Back"
+                                size_hint_x: 0.5
+                                on_press:
+                                    screen_manager.transition.direction = 'right'
+                                    screen_manager.current = 'Manage Incomes'
+                            MDRaisedButton:
+                                text: "Store Expense"
+                                size_hint_x: 0.5
+                                on_press:
+                                    app.store_expense('recurring_expense')
                 MDScreen:
                     name: "Manage Categories"
                     MDLabel:

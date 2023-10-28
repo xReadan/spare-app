@@ -8,7 +8,7 @@ from kivy.lang import Builder
 from kivy.properties import ObjectProperty, StringProperty
 
 from lib.db import connect_to_db
-from lib.utils import signup_user, check_login_user, check_user, save_expense, save_amount, fetch_user_data
+from lib.utils import signup_user, check_login_user, check_user, save_expense, save_amount, fetch_user_data, delete_expense
 
 from datetime import datetime
 
@@ -47,6 +47,8 @@ class MainApp(MDApp):
         return Builder.load_file("layout.kv")
 
     def on_start(self):
+        # Add tables
+        self.create_recurring_expense_table()
         # Check if user is preset
         if os.path.isfile("logged_user.json"):
             with open("logged_user.json", "r") as f:
@@ -56,6 +58,7 @@ class MainApp(MDApp):
                     self.login(user)
                     # Redirect
                     self.root.ids.root_screen_manager.current = "logged"
+
 
     def signup(self):
         signup_user(self)
@@ -81,35 +84,50 @@ class MainApp(MDApp):
             os.remove("logged_user.json")
         self.root.ids.root_screen_manager.current = "login"
 
-    def store_expense(self):
+    def store_expense(self, type: str):
         # Reset text just in case of errors
         self.root.ids["notification_text"].text = ""
         # Retrieve data and parse amount
         today = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         try:
-            amount = float(self.root.ids["expense_amount"].text)
+            amount = float(self.root.ids[type].text)
         except Exception:
             self.root.ids.notification_text.text = "Please enter a valide number"
             return
-        if save_expense(self, amount, today):
+        if save_expense(self, amount, today, type):
             self.update_app_text()
             self.root.ids.screen_manager.transition.direction = "right"
-            self.root.ids.screen_manager.current = "Dashboard"
+            if type == "recurring_expense":
+                self.root.ids.screen_manager.current = "Manage Incomes"
+            else:
+                self.root.ids.screen_manager.current = "Dashboard"
         else:
             self.root.ids.notification_text.text = "Something went wrong"
             return
 
-    def open_manage_incomes(self):
-        table = MDDataTable(
-            check=True,
-            column_data=[
-                ("Category", dp(80)),
-                ("Amount", dp(40))
-            ],
-            row_data=self.user_data["recurring_expenses"],
-        )
-        self.root.ids.incomes_data_layout.add_widget(table)
-        self.root.ids.screen_manager.current = "Manage Incomes"
+    def remove_expense(self, type: str):
+        if type == "recurring":
+            # Get selection
+            selection = self.recurring_expenses_table.get_row_checks()
+            # Check if there are selected item
+            if len(selection) > 0:
+                # Retrieve the expense id from the selection
+                ids = [tmp[0] for tmp in selection]
+                # Run the delete and check
+                if delete_expense(self, ids, type):
+                    self.update_app_text()
+                    self.recurring_expense_selection = []
+                    self.root.ids.screen_manager.transition.direction = "right"
+                    self.root.ids.screen_manager.current = "Manage Incomes"
+                else:
+                    self.root.ids.notification_text.text = "Something went wrong"
+                    return
+        elif type == "tmp":
+            if delete_expense(self, [], type):
+                self.update_app_text()
+            else:
+                self.root.ids.notification_text.text = "Something went wrong"
+                return
 
     def update_income(self):
         # Reset text just in case of errors
@@ -128,10 +146,30 @@ class MainApp(MDApp):
             return
     
     def update_app_text(self):
+        # Fetch new data
         self.user_data = fetch_user_data(self)
+        # Update text
         self.root.ids.remaining_budget.text = self.user_data["budget"]
         self.root.ids.current_incom.text = self.user_data["income"]
         self.root.ids.remaining_budget.text = self.user_data["budget"]
+        # Update tables
+        self.root.ids.incomes_data_layout.remove_widget(self.recurring_expenses_table)
+        self.create_recurring_expense_table()
+        # Update table selection
+        self.recurring_expense_selection = []
 
+    def create_recurring_expense_table(self):
+        # Create tables
+        self.recurring_expenses_table = MDDataTable(
+            check=True,
+            column_data=[
+                ("ID", dp(20)),
+                ("Category", dp(60)),
+                ("Amount", dp(40))
+            ],
+            row_data=self.user_data["recurring_expenses"],
+        )
+        # Add widget
+        self.root.ids.incomes_data_layout.add_widget(self.recurring_expenses_table)
 
 MainApp().run()
