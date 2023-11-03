@@ -147,6 +147,32 @@ def save_amount(app: MDApp, income: float) -> bool:
             return False
 
 
+def save_savings(app: MDApp, savings_pct: float) -> bool:
+    if app.user is not None:
+        # Check if user already has input
+        query = f"""
+            SELECT * FROM savings WHERE user_id = {app.user[0]}
+        """
+        check = app.cursor.execute(query).fetchone()
+        # Is user exist check psw
+        if check is None:
+            query = f"""
+                INSERT INTO savings (threshold, user_id)
+                VALUES('{savings_pct}', '{app.user[0]}')
+            """
+        else:
+            query = f"""
+                UPDATE savings SET threshold = '{savings_pct}' WHERE user_id = {app.user[0]}
+            """
+        try:
+            app.cursor.execute(query)
+            app.conn.commit()
+            # Go to login page
+            return True
+        except Exception:
+            return False
+
+
 def fetch_user_data(app: MDApp) -> dict:
     user_data = {
         "budget": "0€",
@@ -156,6 +182,8 @@ def fetch_user_data(app: MDApp) -> dict:
         "income": "0€",
         "net_income": 0,
         "categories": [],
+        "savings": "(Current Savings: 0%)",
+        "net_savings": 0,
     }
     if app.user is not None:
         # Get net income
@@ -164,6 +192,12 @@ def fetch_user_data(app: MDApp) -> dict:
         if income is not None:
             user_data["income"] = f"{income[1]}€"
             user_data["net_income"] = income[1]
+        # Get savings
+        net_savings_query = f"SELECT * FROM savings WHERE user_id = {app.user[0]}"
+        net_savings = app.cursor.execute(net_savings_query).fetchone()
+        if net_savings is not None:
+            user_data["savings"] = f"(Current Savings: {net_savings[1]}%)"
+            user_data["net_savings"] = net_savings[1]
         # Get Recurring expenses
         r_expense_query = (
             f"SELECT * FROM expenses WHERE user_id = {app.user[0]} AND recurring = 1"
@@ -184,7 +218,16 @@ def fetch_user_data(app: MDApp) -> dict:
         # Update budget
         recurring_sum = sum([tmp[2] for tmp in user_data["recurring_expenses"]])
         temp_sum = sum([tmp[2] for tmp in user_data["temp_expenses"]])
-        user_data["net_budget"] = user_data["net_income"] - (recurring_sum + temp_sum)
+        # Check if the user has savings option set
+        if net_savings[1] > 0:
+            user_data["net_budget"] = (
+                user_data["net_income"]
+                - (user_data["net_income"] * (net_savings[1] / 100))
+            ) - (recurring_sum + temp_sum)
+        else:
+            user_data["net_budget"] = user_data["net_income"] - (
+                recurring_sum + temp_sum
+            )
         user_data["budget"] = f"{user_data['net_budget']}€"
     return user_data
 

@@ -8,7 +8,7 @@ from kivy.lang import Builder
 from kivy.properties import ObjectProperty, StringProperty
 
 from lib.db import connect_to_db
-from lib.utils import signup_user, check_login_user, check_user, save_expense, save_amount, fetch_user_data, delete_expense
+from lib.utils import *
 
 from datetime import datetime
 
@@ -58,7 +58,6 @@ class MainApp(MDApp):
                     self.login(user)
                     # Redirect
                     self.root.ids.root_screen_manager.current = "logged"
-
 
     def signup(self):
         signup_user(self)
@@ -144,13 +143,33 @@ class MainApp(MDApp):
         else:
             self.root.ids.notification_text.text = "Something went wrong"
             return
-    
+
+    def update_savings(self):
+        # Reset text just in case of errors
+        self.root.ids["notification_text"].text = ""
+        try:
+            amount = float(self.root.ids.update_savings.text)
+        except Exception:
+            self.root.ids.notification_text.text = "Please enter a valide number"
+            return
+        if amount < 0 or amount > 99:
+            self.root.ids["notification_text"].text = "THe amount must be between 0 and 99"
+            return
+        if save_savings(self, amount):
+            self.update_app_text()
+            self.root.ids.screen_manager.transition.direction = "right"
+            self.root.ids.screen_manager.current = "Manage Incomes"
+        else:
+            self.root.ids.notification_text.text = "Something went wrong"
+            return
+
     def update_app_text(self):
         # Fetch new data
         self.user_data = fetch_user_data(self)
         # Update text
         self.root.ids.remaining_budget.text = self.user_data["budget"]
-        self.root.ids.current_incom.text = self.user_data["income"]
+        self.root.ids.current_income.text = self.user_data["income"]
+        self.root.ids.current_savings.text = self.user_data["savings"]
         self.root.ids.remaining_budget.text = self.user_data["budget"]
         # Update tables
         self.root.ids.incomes_data_layout.remove_widget(self.recurring_expenses_table)
@@ -162,14 +181,11 @@ class MainApp(MDApp):
         # Create tables
         self.recurring_expenses_table = MDDataTable(
             check=True,
-            column_data=[
-                ("ID", dp(20)),
-                ("Category", dp(60)),
-                ("Amount", dp(40))
-            ],
+            column_data=[("ID", dp(20)), ("Category", dp(60)), ("Amount", dp(40))],
             row_data=self.user_data["recurring_expenses"],
         )
         # Add widget
         self.root.ids.incomes_data_layout.add_widget(self.recurring_expenses_table)
+
 
 MainApp().run()

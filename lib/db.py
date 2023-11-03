@@ -41,6 +41,14 @@ def create_db():
             ON DELETE CASCADE)"""
     )
     cursor.execute(
+        """CREATE TABLE savings (
+            id INTEGER PRIMARY KEY, 
+            threshold REAL,
+            user_id INTEGER,
+            FOREIGN KEY (user_id) REFERENCES users (id) 
+            ON DELETE CASCADE)"""
+    )
+    cursor.execute(
         """CREATE TABLE expenses (
             id INTEGER PRIMARY KEY, 
             date TEXT,
