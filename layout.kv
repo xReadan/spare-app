@@ -193,7 +193,7 @@ MDScreen:
                         size_hint_x: 0.8
                         md_bg_color: "232D3F"
                         MDLabel:
-                            text: "Remaining Budget"
+                            text: "This Month you are saving:"
                             font_name: "Quicksand"
                             halign: "center"
                             size_hint_y: None
@@ -225,7 +225,7 @@ MDScreen:
                     name: "Add Expenses"
                     MDGridLayout:
                         cols: 1
-                        rows: 2
+                        rows: 3
                         adaptive_height: True
                         pos_hint: {"center_x": 0.5, "center_y": 0.5}
                         size_hint_x: 0.8
@@ -238,6 +238,16 @@ MDScreen:
                             hint_text: "Expense Amount"
                             helper_text_mode: "persistent"
                             input_filter: "float"
+                        MDGridLayout:
+                            id: category_drop
+                            size_hint_y: None
+                            cols: 1
+                            rows: 1
+                            MDRaisedButton:
+                                id: category_dropdown_button
+                                text: "Categories"
+                                size_hint_x: 1
+                                on_release: app.category_menu()
                         MDRaisedButton:
                             text: "Add Expense"
                             size_hint_x: 0.5
@@ -289,7 +299,7 @@ MDScreen:
                                     size_hint_x: 0.5
                                     on_press:
                                         screen_manager.transition.direction = "left"
-                                        screen_manager.current = 'Manager Savings'
+                                        screen_manager.current = 'Manage Savings'
                                 MDRaisedButton:
                                     text: "Update Income"
                                     size_hint_x: 0.5
@@ -362,7 +372,7 @@ MDScreen:
                                 on_press:
                                     app.update_income()
                 MDScreen:
-                    name: "Manager Savings"
+                    name: "Manage Savings"
                     MDGridLayout:
                         cols: 1
                         rows: 2

@@ -2,7 +2,11 @@ from kivymd.app import MDApp
 from kivymd.uix.boxlayout import MDBoxLayout
 from kivymd.uix.relativelayout import MDRelativeLayout
 from kivymd.uix.datatables import MDDataTable
+from kivymd.uix.menu import MDDropdownMenu
+from kivymd.uix.button import MDRaisedButton
 
+from kivy.uix.button import Button
+from kivy.uix.dropdown import DropDown
 from kivy.metrics import dp
 from kivy.lang import Builder
 from kivy.properties import ObjectProperty, StringProperty
@@ -88,10 +92,16 @@ class MainApp(MDApp):
         self.root.ids["notification_text"].text = ""
         # Retrieve data and parse amount
         today = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        # Parse amount
         try:
             amount = float(self.root.ids[type].text)
         except Exception:
             self.root.ids.notification_text.text = "Please enter a valide number"
+            return
+        # Retrieve Category
+        category = self.root.ids.category_dropdown_button.text
+        if category == "Categories":
+            self.root.ids.notification_text.text = "Select a Category"
             return
         if save_expense(self, amount, today, type):
             self.update_app_text()
@@ -153,7 +163,9 @@ class MainApp(MDApp):
             self.root.ids.notification_text.text = "Please enter a valide number"
             return
         if amount < 0 or amount > 99:
-            self.root.ids["notification_text"].text = "THe amount must be between 0 and 99"
+            self.root.ids[
+                "notification_text"
+            ].text = "THe amount must be between 0 and 99"
             return
         if save_savings(self, amount):
             self.update_app_text()
@@ -186,6 +198,45 @@ class MainApp(MDApp):
         )
         # Add widget
         self.root.ids.incomes_data_layout.add_widget(self.recurring_expenses_table)
+
+    def category_menu(self):
+        # Create dropdown
+        categories = [
+            {
+                "text": "Food",
+                "on_release": lambda x="Food": self.select_category(x),
+                "viewclass": "OneLineListItem",
+                "height": dp(56),
+            },
+            {
+                "text": "Transportation",
+                "on_release": lambda x="Transportation": self.select_category(x),
+                "viewclass": "OneLineListItem",
+                "height": dp(56),
+            },
+            {
+                "text": "Utilities",
+                "on_release": lambda x="Utilities": self.select_category(x),
+                "viewclass": "OneLineListItem",
+                "height": dp(56),
+            },
+            {
+                "text": "Personal",
+                "on_release": lambda x="Personal": self.select_category(x),
+                "viewclass": "OneLineListItem",
+                "height": dp(56),
+            },
+        ]
+        self.menu = MDDropdownMenu(
+            caller=self.root.ids.category_dropdown_button,
+            items=categories,
+            width_mult=4,
+        )
+        self.menu.open()
+
+    def select_category(self, category):
+        self.root.ids.category_dropdown_button.text = category
+        self.menu.dismiss()
 
 
 MainApp().run()
