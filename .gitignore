@@ -3,3 +3,5 @@ logged_user.json
 .vscode/*
 **/__pycache__/**
 env/
+bin/
+.buildozer/
