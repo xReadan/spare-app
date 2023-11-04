@@ -273,7 +273,7 @@ def fetch_user_data(app: MDApp) -> dict:
             # Update net budget
             user_data["net_budget"] = (
                 user_data["net_income"]
-                - (user_data["net_income"] * (net_savings[1] / 100))
+                - (user_data["net_income"] * (user_data["net_savings"] / 100))
             ) - (recurring_sum + temp_sum)
             #
         else:
@@ -286,7 +286,7 @@ def fetch_user_data(app: MDApp) -> dict:
             # Get remaining budgets
             raw_income = (
                 user_data["net_income"]
-                - (user_data["net_income"] * (net_savings[1] / 100))
+                - (user_data["net_income"] * (user_data["net_savings"] / 100))
                 - recurring_sum
             )
             # Init sum
