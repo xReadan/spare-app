@@ -91,10 +91,10 @@ MDScreen:
         id: notification_text
         text: ""
         halign: "center"
-        y: 200
+        pos_hint: {"center_x": .5, "center_y": .8}
         color: "#008170"
         font_name: "Quicksand"
-        font_size: 24
+        font_size: dp(24)
 
     MDScreenManager:
         id: root_screen_manager
@@ -154,22 +154,24 @@ MDScreen:
                 hint_text: "Password"
                 pos_hint: {"center_x": .5, "center_y": .45}
             MDRaisedButton:
-                text: "Login"
-                pos_hint: {"center_x": .55, "center_y": .35}
-                on_press:
-                    root_screen_manager.transition.direction = 'right'
-                    root_screen_manager.current = 'login'
-            MDRaisedButton:
                 text: "Signup"
-                pos_hint: {"center_x": .45, "center_y": .35}
+                pos_hint: {"center_x": .5, "center_y": .35}
                 on_press:
                     app.signup()
                     root_screen_manager.transition.direction = 'right'
+            MDRaisedButton:
+                text: "Back"
+                pos_hint: {"center_x": .5, "center_y": .25}
+                on_press:
+                    root_screen_manager.transition.direction = 'right'
+                    root_screen_manager.current = 'login'
         MDScreen:
             name: "logged"
             MDTopAppBar:
                 title: screen_manager.current
                 elevation: 4
+                size_hint_y: None
+                height: dp(80)
                 pos_hint: {"top": 1}
                 md_bg_color: "232D3F"
                 specific_text_color: "#008170"
@@ -188,25 +190,26 @@ MDScreen:
                     MDGridLayout:
                         cols: 1
                         rows: 6
-                        adaptive_height: True
                         pos_hint: {"center_x": 0.5, "center_y": 0.5}
                         size_hint_x: 0.8
+                        size_hint_y: None
+                        height: dp(400)
                         md_bg_color: "232D3F"
-                        spacing: 10, 20
+                        spacing: dp(10), dp(20)
                         MDLabel:
                             md_bg_color: "005B41"
                             text: "Savings"
                             font_name: "Quicksand"
                             halign: "center"
                             size_hint_y: None
-                            height: 50
+                            height: dp(50)
                             font_style: "H5"
                         MDLabel:
                             id: remaining_budget
                             text: ""
                             font_name: "Quicksand"
                             size_hint_y: None
-                            height: 80
+                            height: dp(80)
                             halign: "center"
                             font_style: "H2"
                         MDLabel:
@@ -215,14 +218,14 @@ MDScreen:
                             font_name: "Quicksand"
                             halign: "center"
                             size_hint_y: None
-                            height: 30
+                            height: dp(30)
                         MDLabel:
                             md_bg_color: "005B41"
                             text: "Remaining Budgets"
                             font_name: "Quicksand"
                             halign: "center"
                             size_hint_y: None
-                            height: 50
+                            height: dp(50)
                             font_style: "H5"
                         MDGridLayout:
                             cols: 4
@@ -236,53 +239,53 @@ MDScreen:
                                 font_name: "Quicksand"
                                 halign: "center"
                                 size_hint_y: None
-                                height: 25
+                                height: dp(25)
                             MDLabel:
                                 text: "Travel"
                                 font_name: "Quicksand"
                                 halign: "center"
                                 size_hint_y: None
-                                height: 25
+                                height: dp(25)
                             MDLabel:
                                 text: "Utilities"
                                 font_name: "Quicksand"
                                 halign: "center"
                                 size_hint_y: None
-                                height: 25
+                                height: dp(25)
                             MDLabel:
                                 text: "Personal"
                                 font_name: "Quicksand"
                                 halign: "center"
                                 size_hint_y: None
-                                height: 25
+                                height: dp(25)
                             MDLabel:
                                 id: food_remaining_budget
                                 text: ""
                                 font_name: "Quicksand"
                                 halign: "center"
                                 size_hint_y: None
-                                height: 40
+                                height: dp(40)
                             MDLabel:
                                 id: transportation_remaining_budget
                                 text: ""
                                 font_name: "Quicksand"
                                 halign: "center"
                                 size_hint_y: None
-                                height: 40
+                                height: dp(40)
                             MDLabel:
                                 id: utilities_remaining_budget
                                 text: ""
                                 font_name: "Quicksand"
                                 halign: "center"
                                 size_hint_y: None
-                                height: 40
+                                height: dp(40)
                             MDLabel:
                                 id: personal_remaining_budget
                                 text: ""
                                 font_name: "Quicksand"
                                 halign: "center"
                                 size_hint_y: None
-                                height: 40
+                                height: dp(40)
                         MDRaisedButton:
                             text: "Add Expense"
                             size_hint_x: 0.5
@@ -302,9 +305,11 @@ MDScreen:
                     MDGridLayout:
                         cols: 1
                         rows: 3
-                        adaptive_height: True
                         pos_hint: {"center_x": 0.5, "center_y": 0.5}
-                        size_hint_x: 0.8
+                        size_hint_x: None
+                        size_hint_y: None
+                        width: dp(300)
+                        height: dp(230)
                         md_bg_color: "232D3F"
                         padding: [12,6,12,12]
                         MDTextField:
@@ -338,24 +343,25 @@ MDScreen:
                         MDGridLayout:
                             cols: 1
                             rows: 7
-                            adaptive_height: True
+                            size_hint_y: None
+                            height: dp(650)
                             size_hint_x: 1
                             md_bg_color: "232D3F"
-                            spacing: 10, 20
+                            spacing: dp(10), dp(20)
                             MDLabel:
                                 md_bg_color: "005B41"
                                 text: "Current Income"
                                 font_name: "Quicksand"
                                 halign: "center"
                                 size_hint_y: None
-                                height: 50
+                                height: dp(50)
                                 font_style: "H5"
                             MDLabel:
                                 id: current_income
                                 text: ""
                                 font_name: "Quicksand"
                                 size_hint_y: None
-                                height: 80
+                                height: dp(80)
                                 halign: "center"
                                 font_style: "H2"
                             MDLabel:
@@ -364,7 +370,7 @@ MDScreen:
                                 font_name: "Quicksand"
                                 halign: "center"
                                 size_hint_y: None
-                                height: 30
+                                height: dp(30)
                                 font_style: "H6"
                             MDGridLayout:
                                 cols: 2
@@ -390,12 +396,12 @@ MDScreen:
                                 font_name: "Quicksand"
                                 halign: "center"
                                 size_hint_y: None
-                                height: 50
+                                height: dp(50)
                                 font_style: "H5"
                             MDGridLayout:
                                 id: incomes_data_layout
                                 size_hint_y: None
-                                height: 250
+                                height: dp(250)
                                 cols: 1
                                 rows: 1
                             MDGridLayout:
@@ -420,9 +426,10 @@ MDScreen:
                     MDGridLayout:
                         cols: 1
                         rows: 2
-                        adaptive_height: True
                         pos_hint: {"center_x": 0.5, "center_y": 0.5}
                         size_hint_x: 0.8
+                        size_hint_y: None
+                        height: dp(120)
                         md_bg_color: "232D3F"
                         padding: [12,6,12,12]
                         MDTextField:
@@ -455,9 +462,10 @@ MDScreen:
                     MDGridLayout:
                         cols: 1
                         rows: 2
-                        adaptive_height: True
                         pos_hint: {"center_x": 0.5, "center_y": 0.5}
                         size_hint_x: 0.8
+                        size_hint_y: None
+                        height: dp(120)
                         md_bg_color: "232D3F"
                         padding: [12,6,12,12]
                         MDTextField:
@@ -490,9 +498,10 @@ MDScreen:
                     MDGridLayout:
                         cols: 1
                         rows: 2
-                        adaptive_height: True
                         pos_hint: {"center_x": 0.5, "center_y": 0.5}
                         size_hint_x: 0.8
+                        size_hint_y: None
+                        height: dp(120)
                         md_bg_color: "232D3F"
                         padding: [12,6,12,12]
                         MDTextField:
@@ -528,6 +537,8 @@ MDScreen:
                         adaptive_height: True
                         pos_hint: {"center_x": 0.5, "center_y": 0.5}
                         size_hint_x: 0.8
+                        size_hint_y: None
+                        height: dp(200)
                         md_bg_color: "232D3F"
                         padding: [12,6,12,12]
                         MDLabel:

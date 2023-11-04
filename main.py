@@ -16,6 +16,8 @@ from datetime import datetime
 import json, time
 import os.path
 
+from kivy.core.window import Window
+
 """
 COLORS: https://colorhunt.co/palette/0f0f0f232d3f005b41008170
 """
