@@ -53,9 +53,12 @@ def create_db():
             id INTEGER PRIMARY KEY, 
             date TEXT,
             amount REAL,
+            category_id INTEGER,
             user_id INTEGER,
             recurring INTEGER,
             FOREIGN KEY (user_id) REFERENCES users (id) 
+            ON DELETE CASCADE,
+            FOREIGN KEY (category_id) REFERENCES categories (id) 
             ON DELETE CASCADE)"""
     )
 

@@ -3,10 +3,7 @@ from kivymd.uix.boxlayout import MDBoxLayout
 from kivymd.uix.relativelayout import MDRelativeLayout
 from kivymd.uix.datatables import MDDataTable
 from kivymd.uix.menu import MDDropdownMenu
-from kivymd.uix.button import MDRaisedButton
 
-from kivy.uix.button import Button
-from kivy.uix.dropdown import DropDown
 from kivy.metrics import dp
 from kivy.lang import Builder
 from kivy.properties import ObjectProperty, StringProperty
@@ -99,11 +96,22 @@ class MainApp(MDApp):
             self.root.ids.notification_text.text = "Please enter a valide number"
             return
         # Retrieve Category
-        category = self.root.ids.category_dropdown_button.text
-        if category == "Categories":
-            self.root.ids.notification_text.text = "Select a Category"
-            return
-        if save_expense(self, amount, today, type):
+        if type == "expense_amount":
+            text_category = self.root.ids.category_dropdown_button.text
+            if text_category == "Select a Category":
+                self.root.ids.notification_text.text = "Select a Category"
+                return
+        else:
+            # For recurring expense default to 'Utilities'
+            text_category = "Utilities"
+        # Get the ID
+        category = [
+            element
+            for element in self.user_data["categories"]
+            if element[1] == text_category
+        ][0]
+        # Store expense
+        if save_expense(self, amount, category[0], today, type):
             self.update_app_text()
             self.root.ids.screen_manager.transition.direction = "right"
             if type == "recurring_expense":
@@ -178,11 +186,23 @@ class MainApp(MDApp):
     def update_app_text(self):
         # Fetch new data
         self.user_data = fetch_user_data(self)
+        # Get net savings
+        net_savings = self.user_data['net_income'] * (self.user_data['net_savings']/100)
         # Update text
-        self.root.ids.remaining_budget.text = self.user_data["budget"]
+        self.root.ids.remaining_budget.text = f"{self.user_data['net_budget'] + net_savings}€"
         self.root.ids.current_income.text = self.user_data["income"]
         self.root.ids.current_savings.text = self.user_data["savings"]
-        self.root.ids.remaining_budget.text = self.user_data["budget"]
+        self.root.ids.direct_saving_label.text = f"({net_savings} are direct savings)"
+        # Update categories
+        for catgory in self.user_data["categories"]:
+            # Update input fields
+            self.root.ids[
+                f"{catgory[1].lower()}_threshold_field"
+            ].text = f"{catgory[2]}"
+            # Update dashboard
+            self.root.ids[
+                f"{catgory[1].lower()}_remaining_budget"
+            ].text = f"{self.user_data['category_budgets'][catgory[1]]}€"
         # Update tables
         self.root.ids.incomes_data_layout.remove_widget(self.recurring_expenses_table)
         self.create_recurring_expense_table()
@@ -199,34 +219,45 @@ class MainApp(MDApp):
         # Add widget
         self.root.ids.incomes_data_layout.add_widget(self.recurring_expenses_table)
 
+    def update_categories(self):
+        # Reset text just in case of errors
+        self.root.ids["notification_text"].text = ""
+        # Check sum
+        categories_val = []
+        # Retrieve data
+        for catgory in self.user_data["categories"]:
+            categories_val.append(
+                float(self.root.ids[f"{catgory[1].lower()}_threshold_field"].text)
+            )
+        # Check
+        if sum(categories_val) != 0 and sum(categories_val) != 100:
+            self.root.ids["notification_text"].text = "Incorrect input"
+            return
+        else:
+            for catgory in self.user_data["categories"]:
+                save_category(
+                    self,
+                    catgory[1],
+                    float(self.root.ids[f"{catgory[1].lower()}_threshold_field"].text),
+                )
+            # Update infos
+            self.user_data = fetch_user_data(self)
+            # Redirect
+            self.root.ids.screen_manager.transition.direction = "right"
+            self.root.ids.screen_manager.current = "Dashboard"
+
     def category_menu(self):
-        # Create dropdown
-        categories = [
-            {
-                "text": "Food",
-                "on_release": lambda x="Food": self.select_category(x),
-                "viewclass": "OneLineListItem",
-                "height": dp(56),
-            },
-            {
-                "text": "Transportation",
-                "on_release": lambda x="Transportation": self.select_category(x),
-                "viewclass": "OneLineListItem",
-                "height": dp(56),
-            },
-            {
-                "text": "Utilities",
-                "on_release": lambda x="Utilities": self.select_category(x),
-                "viewclass": "OneLineListItem",
-                "height": dp(56),
-            },
-            {
-                "text": "Personal",
-                "on_release": lambda x="Personal": self.select_category(x),
-                "viewclass": "OneLineListItem",
-                "height": dp(56),
-            },
-        ]
+        # Create dropdown items
+        categories = []
+        for category in DEFAULT_CATEGORIES:
+            categories.append(
+                {
+                    "text": category,
+                    "on_release": lambda x=category: self.select_category(x),
+                    "viewclass": "OneLineListItem",
+                    "height": dp(56),
+                }
+            )
         self.menu = MDDropdownMenu(
             caller=self.root.ids.category_dropdown_button,
             items=categories,

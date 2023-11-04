@@ -187,13 +187,15 @@ MDScreen:
                     name: "Dashboard"
                     MDGridLayout:
                         cols: 1
-                        rows: 3
+                        rows: 6
                         adaptive_height: True
                         pos_hint: {"center_x": 0.5, "center_y": 0.5}
                         size_hint_x: 0.8
                         md_bg_color: "232D3F"
+                        spacing: 10, 20
                         MDLabel:
-                            text: "This Month you are saving:"
+                            md_bg_color: "005B41"
+                            text: "Savings"
                             font_name: "Quicksand"
                             halign: "center"
                             size_hint_y: None
@@ -204,9 +206,83 @@ MDScreen:
                             text: ""
                             font_name: "Quicksand"
                             size_hint_y: None
-                            height: 150
+                            height: 80
                             halign: "center"
                             font_style: "H2"
+                        MDLabel:
+                            id: direct_saving_label
+                            text: ""
+                            font_name: "Quicksand"
+                            halign: "center"
+                            size_hint_y: None
+                            height: 30
+                        MDLabel:
+                            md_bg_color: "005B41"
+                            text: "Remaining Budgets"
+                            font_name: "Quicksand"
+                            halign: "center"
+                            size_hint_y: None
+                            height: 50
+                            font_style: "H5"
+                        MDGridLayout:
+                            cols: 4
+                            rows: 2
+                            adaptive_height: True
+                            pos_hint: {"center_x": 0.5, "center_y": 0.5}
+                            size_hint_x: 0.8
+                            md_bg_color: "232D3F"
+                            MDLabel:
+                                text: "Food"
+                                font_name: "Quicksand"
+                                halign: "center"
+                                size_hint_y: None
+                                height: 25
+                            MDLabel:
+                                text: "Travel"
+                                font_name: "Quicksand"
+                                halign: "center"
+                                size_hint_y: None
+                                height: 25
+                            MDLabel:
+                                text: "Utilities"
+                                font_name: "Quicksand"
+                                halign: "center"
+                                size_hint_y: None
+                                height: 25
+                            MDLabel:
+                                text: "Personal"
+                                font_name: "Quicksand"
+                                halign: "center"
+                                size_hint_y: None
+                                height: 25
+                            MDLabel:
+                                id: food_remaining_budget
+                                text: ""
+                                font_name: "Quicksand"
+                                halign: "center"
+                                size_hint_y: None
+                                height: 40
+                            MDLabel:
+                                id: transportation_remaining_budget
+                                text: ""
+                                font_name: "Quicksand"
+                                halign: "center"
+                                size_hint_y: None
+                                height: 40
+                            MDLabel:
+                                id: utilities_remaining_budget
+                                text: ""
+                                font_name: "Quicksand"
+                                halign: "center"
+                                size_hint_y: None
+                                height: 40
+                            MDLabel:
+                                id: personal_remaining_budget
+                                text: ""
+                                font_name: "Quicksand"
+                                halign: "center"
+                                size_hint_y: None
+                                height: 40
                         MDRaisedButton:
                             text: "Add Expense"
                             size_hint_x: 0.5
@@ -245,7 +321,7 @@ MDScreen:
                             rows: 1
                             MDRaisedButton:
                                 id: category_dropdown_button
-                                text: "Categories"
+                                text: "Select a Category"
                                 size_hint_x: 1
                                 on_release: app.category_menu()
                         MDRaisedButton:
@@ -265,7 +341,9 @@ MDScreen:
                             adaptive_height: True
                             size_hint_x: 1
                             md_bg_color: "232D3F"
+                            spacing: 10, 20
                             MDLabel:
+                                md_bg_color: "005B41"
                                 text: "Current Income"
                                 font_name: "Quicksand"
                                 halign: "center"
@@ -277,7 +355,7 @@ MDScreen:
                                 text: ""
                                 font_name: "Quicksand"
                                 size_hint_y: None
-                                height: 100
+                                height: 80
                                 halign: "center"
                                 font_style: "H2"
                             MDLabel:
@@ -286,7 +364,7 @@ MDScreen:
                                 font_name: "Quicksand"
                                 halign: "center"
                                 size_hint_y: None
-                                height: 50
+                                height: 30
                                 font_style: "H6"
                             MDGridLayout:
                                 cols: 2
@@ -307,11 +385,12 @@ MDScreen:
                                         screen_manager.transition.direction = 'left'
                                         screen_manager.current = 'Update Income'
                             MDLabel:
+                                md_bg_color: "005B41"
                                 text: "Recurring Expenses"
                                 font_name: "Quicksand"
                                 halign: "center"
                                 size_hint_y: None
-                                height: 60
+                                height: 50
                                 font_style: "H5"
                             MDGridLayout:
                                 id: incomes_data_layout
@@ -443,10 +522,48 @@ MDScreen:
                                     app.store_expense('recurring_expense')
                 MDScreen:
                     name: "Manage Categories"
-                    MDLabel:
-                        text: "Categories"
-                        halign: 'center'
-
+                    MDGridLayout:
+                        cols: 1
+                        rows: 6
+                        adaptive_height: True
+                        pos_hint: {"center_x": 0.5, "center_y": 0.5}
+                        size_hint_x: 0.8
+                        md_bg_color: "232D3F"
+                        padding: [12,6,12,12]
+                        MDLabel:
+                            text: "The sum of these fields must be 0 or 100"
+                            halign: "center"
+                            size_hint_y: None
+                            height: 30
+                        MDTextField:
+                            id: food_threshold_field
+                            hint_text: "Food Category Threshold (%)"
+                            helper_text_mode: "persistent"
+                            input_filter: "float"
+                            text: ""
+                        MDTextField:
+                            id: transportation_threshold_field
+                            hint_text: "Travel Category Threshold (%)"
+                            helper_text_mode: "persistent"
+                            input_filter: "float"
+                            text: ""
+                        MDTextField:
+                            id: utilities_threshold_field
+                            hint_text: "Utilities Category Threshold (%)"
+                            helper_text_mode: "persistent"
+                            input_filter: "float"
+                            text: ""
+                        MDTextField:
+                            id: personal_threshold_field
+                            hint_text: "Personal Category Threshold (%)"
+                            helper_text_mode: "persistent"
+                            input_filter: "float"
+                            text: ""
+                        MDRaisedButton:
+                            text: "Update"
+                            size_hint_x: 0.5
+                            on_press:
+                                app.update_categories()
                 MDScreen:
                     name: "Check Expenses"
                     MDLabel:
