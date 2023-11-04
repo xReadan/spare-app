@@ -187,9 +187,13 @@ class MainApp(MDApp):
         # Fetch new data
         self.user_data = fetch_user_data(self)
         # Get net savings
-        net_savings = self.user_data['net_income'] * (self.user_data['net_savings']/100)
+        net_savings = self.user_data["net_income"] * (
+            self.user_data["net_savings"] / 100
+        )
         # Update text
-        self.root.ids.remaining_budget.text = f"{self.user_data['net_budget'] + net_savings}€"
+        self.root.ids.remaining_budget.text = (
+            f"{self.user_data['net_budget'] + net_savings}€"
+        )
         self.root.ids.current_income.text = self.user_data["income"]
         self.root.ids.current_savings.text = self.user_data["savings"]
         self.root.ids.direct_saving_label.text = f"({net_savings} are direct savings)"

@@ -284,9 +284,11 @@ def fetch_user_data(app: MDApp) -> dict:
         # Update category budgets
         for category in DEFAULT_CATEGORIES:
             # Get remaining budgets
-            raw_income = user_data["net_income"] - (
-                user_data["net_income"] * (net_savings[1] / 100)
-            ) - recurring_sum
+            raw_income = (
+                user_data["net_income"]
+                - (user_data["net_income"] * (net_savings[1] / 100))
+                - recurring_sum
+            )
             # Init sum
             category_sum = 0
             # Get the id of the category
