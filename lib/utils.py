@@ -206,6 +206,27 @@ def save_category(app: MDApp, category: str, threshold: float) -> bool:
             return False
 
 
+def get_category(app: MDApp, category_id: int) -> str:
+    if app.user is not None:
+        # Check if user already has input
+        query = f"""
+            SELECT * FROM categories WHERE id = {category_id}
+        """
+        category = app.cursor.execute(query).fetchone()
+        if category is not None:
+            return category[1]
+    return "None"
+
+
+def create_expense_tables_data(app: MDApp, expenses: list) -> list:
+    if app.user is None:
+        return []
+    table_data = []
+    for expense in expenses:
+        table_data.append([expense[0], get_category(app, expense[3]), expense[2]])
+    return table_data
+
+
 def fetch_user_data(app: MDApp) -> dict:
     # Init dict
     user_data = {
@@ -246,7 +267,7 @@ def fetch_user_data(app: MDApp) -> dict:
         )
         r_expense = app.cursor.execute(r_expense_query).fetchall()
         user_data["recurring_expenses"] = [
-            [tmp[0], tmp[1], tmp[2]] for tmp in r_expense
+            [tmp[0], tmp[1], tmp[2], tmp[3]] for tmp in r_expense
         ]
         # Get Temp expenses
         t_expense_query = (

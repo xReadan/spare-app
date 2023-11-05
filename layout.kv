@@ -18,10 +18,11 @@
             id: menu_header
             title: "SpareApp"
             title_color: "#FFFFFF"
-            text: "v0.1"
+            source: "assets/sapre_app_launcher.png"
+            text: "v1.0"
             text_color: "#005B41"
             spacing: "4dp"
-            padding: "12dp", 0, 0, "12dp"
+            padding: "12dp", "6pd", "6pd", "12dp"
 
         MDNavigationDrawerDivider:
 
@@ -93,7 +94,7 @@ MDScreen:
         halign: "center"
         pos_hint: {"center_x": .5, "center_y": .8}
         color: "#008170"
-        font_name: "Quicksand"
+        font_name: "assets/Quicksand"
         font_size: dp(24)
 
     MDScreenManager:
@@ -116,14 +117,16 @@ MDScreen:
                 width: "300dp"
                 hint_text: "Password"
                 pos_hint: {"center_x": .5, "center_y": .50}
-            MDRaisedButton:
-                font_name: "Quicksand"
+            MDFlatButton:
+                md_bg_color: app.theme_cls.primary_color
+                font_name: "assets/Quicksand"
                 text: "Login"
                 pos_hint: {"center_x": .5, "center_y": .40}
                 on_press:
                     app.run_login()
-            MDRaisedButton:
-                font_name: "Quicksand"
+            MDFlatButton:
+                md_bg_color: app.theme_cls.primary_color
+                font_name: "assets/Quicksand"
                 text: "Signup"
                 pos_hint: {"center_x": .5, "center_y": .30}
                 on_press:
@@ -153,13 +156,15 @@ MDScreen:
                 width: "300dp"
                 hint_text: "Password"
                 pos_hint: {"center_x": .5, "center_y": .45}
-            MDRaisedButton:
+            MDFlatButton:
+                md_bg_color: app.theme_cls.primary_color
                 text: "Signup"
                 pos_hint: {"center_x": .5, "center_y": .35}
                 on_press:
                     app.signup()
                     root_screen_manager.transition.direction = 'right'
-            MDRaisedButton:
+            MDFlatButton:
+                md_bg_color: app.theme_cls.primary_color
                 text: "Back"
                 pos_hint: {"center_x": .5, "center_y": .25}
                 on_press:
@@ -169,10 +174,8 @@ MDScreen:
             name: "logged"
             MDTopAppBar:
                 title: screen_manager.current
-                elevation: 4
-                size_hint_y: None
-                height: dp(80)
                 pos_hint: {"top": 1}
+                size_hint_y: 0.105
                 md_bg_color: "232D3F"
                 specific_text_color: "#008170"
                 left_action_items:
@@ -199,7 +202,7 @@ MDScreen:
                         MDLabel:
                             md_bg_color: "005B41"
                             text: "Savings"
-                            font_name: "Quicksand"
+                            font_name: "assets/Quicksand"
                             halign: "center"
                             size_hint_y: None
                             height: dp(50)
@@ -207,7 +210,7 @@ MDScreen:
                         MDLabel:
                             id: remaining_budget
                             text: ""
-                            font_name: "Quicksand"
+                            font_name: "assets/Quicksand"
                             size_hint_y: None
                             height: dp(80)
                             halign: "center"
@@ -215,14 +218,14 @@ MDScreen:
                         MDLabel:
                             id: direct_saving_label
                             text: ""
-                            font_name: "Quicksand"
+                            font_name: "assets/Quicksand"
                             halign: "center"
                             size_hint_y: None
                             height: dp(30)
                         MDLabel:
                             md_bg_color: "005B41"
                             text: "Remaining Budgets"
-                            font_name: "Quicksand"
+                            font_name: "assets/Quicksand"
                             halign: "center"
                             size_hint_y: None
                             height: dp(50)
@@ -236,63 +239,65 @@ MDScreen:
                             md_bg_color: "232D3F"
                             MDLabel:
                                 text: "Food"
-                                font_name: "Quicksand"
+                                font_name: "assets/Quicksand"
                                 halign: "center"
                                 size_hint_y: None
                                 height: dp(25)
                             MDLabel:
                                 text: "Travel"
-                                font_name: "Quicksand"
+                                font_name: "assets/Quicksand"
                                 halign: "center"
                                 size_hint_y: None
                                 height: dp(25)
                             MDLabel:
                                 text: "Utilities"
-                                font_name: "Quicksand"
+                                font_name: "assets/Quicksand"
                                 halign: "center"
                                 size_hint_y: None
                                 height: dp(25)
                             MDLabel:
                                 text: "Personal"
-                                font_name: "Quicksand"
+                                font_name: "assets/Quicksand"
                                 halign: "center"
                                 size_hint_y: None
                                 height: dp(25)
                             MDLabel:
                                 id: food_remaining_budget
                                 text: ""
-                                font_name: "Quicksand"
+                                font_name: "assets/Quicksand"
                                 halign: "center"
                                 size_hint_y: None
                                 height: dp(40)
                             MDLabel:
                                 id: transportation_remaining_budget
                                 text: ""
-                                font_name: "Quicksand"
+                                font_name: "assets/Quicksand"
                                 halign: "center"
                                 size_hint_y: None
                                 height: dp(40)
                             MDLabel:
                                 id: utilities_remaining_budget
                                 text: ""
-                                font_name: "Quicksand"
+                                font_name: "assets/Quicksand"
                                 halign: "center"
                                 size_hint_y: None
                                 height: dp(40)
                             MDLabel:
                                 id: personal_remaining_budget
                                 text: ""
-                                font_name: "Quicksand"
+                                font_name: "assets/Quicksand"
                                 halign: "center"
                                 size_hint_y: None
                                 height: dp(40)
-                        MDRaisedButton:
+                        MDFlatButton:
                             text: "Add Expense"
                             size_hint_x: 0.5
+                            md_bg_color: app.theme_cls.primary_color
                             on_press:
                                 screen_manager.transition.direction = 'left'
                                 screen_manager.current = 'Add Expenses'
-                    MDRaisedButton:
+                    MDFlatButton:
+                        md_bg_color: app.theme_cls.primary_color
                         text: "Reset Expenses"
                         size_hint_x: 0.3
                         pos_hint: {"center_x": 0.5, "center_y": 0.05}
@@ -324,12 +329,14 @@ MDScreen:
                             size_hint_y: None
                             cols: 1
                             rows: 1
-                            MDRaisedButton:
+                            MDFlatButton:
+                                md_bg_color: app.theme_cls.primary_color
                                 id: category_dropdown_button
                                 text: "Select a Category"
                                 size_hint_x: 1
                                 on_release: app.category_menu()
-                        MDRaisedButton:
+                        MDFlatButton:
+                            md_bg_color: app.theme_cls.primary_color
                             text: "Add Expense"
                             size_hint_x: 0.5
                             on_press:
@@ -351,7 +358,7 @@ MDScreen:
                             MDLabel:
                                 md_bg_color: "005B41"
                                 text: "Current Income"
-                                font_name: "Quicksand"
+                                font_name: "assets/Quicksand"
                                 halign: "center"
                                 size_hint_y: None
                                 height: dp(50)
@@ -359,7 +366,7 @@ MDScreen:
                             MDLabel:
                                 id: current_income
                                 text: ""
-                                font_name: "Quicksand"
+                                font_name: "assets/Quicksand"
                                 size_hint_y: None
                                 height: dp(80)
                                 halign: "center"
@@ -367,7 +374,7 @@ MDScreen:
                             MDLabel:
                                 id: current_savings
                                 text: "(Savings: 0%)"
-                                font_name: "Quicksand"
+                                font_name: "assets/Quicksand"
                                 halign: "center"
                                 size_hint_y: None
                                 height: dp(30)
@@ -378,13 +385,15 @@ MDScreen:
                                 adaptive_height: True
                                 size_hint_x: 1
                                 md_bg_color: "232D3F"
-                                MDRaisedButton:
+                                MDFlatButton:
+                                    md_bg_color: app.theme_cls.primary_color
                                     text: "Manage Savings"
                                     size_hint_x: 0.5
                                     on_press:
                                         screen_manager.transition.direction = "left"
                                         screen_manager.current = 'Manage Savings'
-                                MDRaisedButton:
+                                MDFlatButton:
+                                    md_bg_color: app.theme_cls.primary_color
                                     text: "Update Income"
                                     size_hint_x: 0.5
                                     on_press:
@@ -393,7 +402,7 @@ MDScreen:
                             MDLabel:
                                 md_bg_color: "005B41"
                                 text: "Recurring Expenses"
-                                font_name: "Quicksand"
+                                font_name: "assets/Quicksand"
                                 halign: "center"
                                 size_hint_y: None
                                 height: dp(50)
@@ -410,12 +419,14 @@ MDScreen:
                                 adaptive_height: True
                                 size_hint_x: 1
                                 md_bg_color: "232D3F"
-                                MDRaisedButton:
+                                MDFlatButton:
+                                    md_bg_color: app.theme_cls.primary_color
                                     text: "Remove Selected"
                                     size_hint_x: 0.5
                                     on_press:
                                         app.remove_expense('recurring')
-                                MDRaisedButton:
+                                MDFlatButton:
+                                    md_bg_color: app.theme_cls.primary_color
                                     text: "Add new"
                                     size_hint_x: 0.5
                                     on_press:
@@ -446,13 +457,15 @@ MDScreen:
                             adaptive_height: True
                             size_hint_x: 1
                             md_bg_color: "232D3F"
-                            MDRaisedButton:
+                            MDFlatButton:
+                                md_bg_color: app.theme_cls.primary_color
                                 text: "Back"
                                 size_hint_x: 0.5
                                 on_press:
                                     screen_manager.transition.direction = 'right'
                                     screen_manager.current = 'Manage Incomes'
-                            MDRaisedButton:
+                            MDFlatButton:
+                                md_bg_color: app.theme_cls.primary_color
                                 text: "Update"
                                 size_hint_x: 0.5
                                 on_press:
@@ -482,13 +495,15 @@ MDScreen:
                             adaptive_height: True
                             size_hint_x: 1
                             md_bg_color: "232D3F"
-                            MDRaisedButton:
+                            MDFlatButton:
+                                md_bg_color: app.theme_cls.primary_color
                                 text: "Back"
                                 size_hint_x: 0.5
                                 on_press:
                                     screen_manager.transition.direction = 'right'
                                     screen_manager.current = 'Manage Incomes'
-                            MDRaisedButton:
+                            MDFlatButton:
+                                md_bg_color: app.theme_cls.primary_color
                                 text: "Update"
                                 size_hint_x: 0.5
                                 on_press:
@@ -518,13 +533,15 @@ MDScreen:
                             adaptive_height: True
                             size_hint_x: 1
                             md_bg_color: "232D3F"
-                            MDRaisedButton:
+                            MDFlatButton:
+                                md_bg_color: app.theme_cls.primary_color
                                 text: "Back"
                                 size_hint_x: 0.5
                                 on_press:
                                     screen_manager.transition.direction = 'right'
                                     screen_manager.current = 'Manage Incomes'
-                            MDRaisedButton:
+                            MDFlatButton:
+                                md_bg_color: app.theme_cls.primary_color
                                 text: "Store Expense"
                                 size_hint_x: 0.5
                                 on_press:
@@ -534,11 +551,10 @@ MDScreen:
                     MDGridLayout:
                         cols: 1
                         rows: 6
-                        adaptive_height: True
                         pos_hint: {"center_x": 0.5, "center_y": 0.5}
                         size_hint_x: 0.8
                         size_hint_y: None
-                        height: dp(200)
+                        height: dp(340)
                         md_bg_color: "232D3F"
                         padding: [12,6,12,12]
                         MDLabel:
@@ -570,16 +586,24 @@ MDScreen:
                             helper_text_mode: "persistent"
                             input_filter: "float"
                             text: ""
-                        MDRaisedButton:
+                        MDFlatButton:
+                            md_bg_color: app.theme_cls.primary_color
                             text: "Update"
                             size_hint_x: 0.5
                             on_press:
                                 app.update_categories()
                 MDScreen:
                     name: "Check Expenses"
-                    MDLabel:
-                        text: "Expenses"
-                        halign: 'center'
+                    MDGridLayout:
+                        id: check_expense_data_layout
+                        pos_hint: {"center_x": 0.5, "center_y": 0.5}
+                        size_hint_x: 0.8
+                        size_hint_y: None
+                        height: dp(340)
+                        md_bg_color: "232D3F"
+                        padding: [12,6,12,12]
+                        cols: 1
+                        rows: 1
 
             MDNavigationDrawer:
                 id: nav_drawer

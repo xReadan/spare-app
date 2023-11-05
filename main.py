@@ -22,6 +22,7 @@ from kivy.core.window import Window
 COLORS: https://colorhunt.co/palette/0f0f0f232d3f005b41008170
 """
 
+__version__ = "1.0"
 
 class ContentNavigationDrawer(MDBoxLayout):
     screen_manager = ObjectProperty()
@@ -43,6 +44,8 @@ class MainApp(MDApp):
         self.title = "SpareApp"
         self.theme_cls.theme_style = "Dark"
         self.theme_cls.primary_palette = "Teal"
+        # Init icon
+        self.icon = "assets/sapre_app_launcher.png"
         # Init info
         self.user = None
         self.user_data = fetch_user_data(self)
@@ -52,6 +55,7 @@ class MainApp(MDApp):
     def on_start(self):
         # Add tables
         self.create_recurring_expense_table()
+        self.create_check_expense_table()
         # Check if user is preset
         if os.path.isfile("logged_user.json"):
             with open("logged_user.json", "r") as f:
@@ -185,6 +189,33 @@ class MainApp(MDApp):
             self.root.ids.notification_text.text = "Something went wrong"
             return
 
+    def update_categories(self):
+        # Reset text just in case of errors
+        self.root.ids["notification_text"].text = ""
+        # Check sum
+        categories_val = []
+        # Retrieve data
+        for catgory in self.user_data["categories"]:
+            categories_val.append(
+                float(self.root.ids[f"{catgory[1].lower()}_threshold_field"].text)
+            )
+        # Check
+        if sum(categories_val) != 0 and sum(categories_val) != 100:
+            self.root.ids["notification_text"].text = "Incorrect input"
+            return
+        else:
+            for catgory in self.user_data["categories"]:
+                save_category(
+                    self,
+                    catgory[1],
+                    float(self.root.ids[f"{catgory[1].lower()}_threshold_field"].text),
+                )
+            # Update infos
+            self.update_app_text()
+            # Redirect
+            self.root.ids.screen_manager.transition.direction = "right"
+            self.root.ids.screen_manager.current = "Dashboard"
+
     def update_app_text(self):
         # Fetch new data
         self.user_data = fetch_user_data(self)
@@ -212,45 +243,36 @@ class MainApp(MDApp):
         # Update tables
         self.root.ids.incomes_data_layout.remove_widget(self.recurring_expenses_table)
         self.create_recurring_expense_table()
+        self.root.ids.check_expense_data_layout.remove_widget(self.check_expense_table)
+        self.create_check_expense_table()
         # Update table selection
         self.recurring_expense_selection = []
 
     def create_recurring_expense_table(self):
+        # Translate expense
+        expense_data = create_expense_tables_data(
+            self, self.user_data["recurring_expenses"]
+        )
         # Create tables
         self.recurring_expenses_table = MDDataTable(
             check=True,
             column_data=[("ID", dp(20)), ("Category", dp(60)), ("Amount", dp(40))],
-            row_data=self.user_data["recurring_expenses"],
+            row_data=expense_data,
         )
         # Add widget
         self.root.ids.incomes_data_layout.add_widget(self.recurring_expenses_table)
 
-    def update_categories(self):
-        # Reset text just in case of errors
-        self.root.ids["notification_text"].text = ""
-        # Check sum
-        categories_val = []
-        # Retrieve data
-        for catgory in self.user_data["categories"]:
-            categories_val.append(
-                float(self.root.ids[f"{catgory[1].lower()}_threshold_field"].text)
-            )
-        # Check
-        if sum(categories_val) != 0 and sum(categories_val) != 100:
-            self.root.ids["notification_text"].text = "Incorrect input"
-            return
-        else:
-            for catgory in self.user_data["categories"]:
-                save_category(
-                    self,
-                    catgory[1],
-                    float(self.root.ids[f"{catgory[1].lower()}_threshold_field"].text),
-                )
-            # Update infos
-            self.user_data = fetch_user_data(self)
-            # Redirect
-            self.root.ids.screen_manager.transition.direction = "right"
-            self.root.ids.screen_manager.current = "Dashboard"
+    def create_check_expense_table(self):
+        # Translate expense
+        expense_data = create_expense_tables_data(self, self.user_data["temp_expenses"])
+        # Create tables
+        self.check_expense_table = MDDataTable(
+            check=False,
+            column_data=[("ID", dp(20)), ("Category", dp(50)), ("Amount", dp(40))],
+            row_data=expense_data,
+        )
+        # Add widget
+        self.root.ids.check_expense_data_layout.add_widget(self.check_expense_table)
 
     def category_menu(self):
         # Create dropdown items
