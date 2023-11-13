@@ -44,7 +44,7 @@ requirements = android,python3,kivy,kivymd,sqlite3,camera4kivy,gestures4kivy,bcr
 # requirements.source.kivy = ../../kivy
 
 # (str) Presplash of the application
-presplash.filename = %(source.dir)s/assets/sapre_app_launcher.png
+presplash.filename = %(source.dir)s/assets/loader.png
 
 # (str) Icon of the application
 icon.filename = %(source.dir)s/assets/sapre_app_launcher.png
@@ -67,7 +67,7 @@ author = xReadan@Github
 osx.python_version = 3
 
 # Kivy version to use
-osx.kivy_version = 1.9.1
+osx.kivy_version = 2.2.1
 
 #
 # Android specific

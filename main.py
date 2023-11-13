@@ -22,7 +22,7 @@ from kivy.core.window import Window
 COLORS: https://colorhunt.co/palette/0f0f0f232d3f005b41008170
 """
 
-__version__ = "1.0"
+__version__ = "1.0.2"
 
 
 class ContentNavigationDrawer(MDBoxLayout):
@@ -37,6 +37,8 @@ class PasswordField(MDRelativeLayout):
 
 class MainApp(MDApp):
     def build(self):
+        # Init verion
+        self.version = __version__
         # Init DB
         conn, cursor = connect_to_db()
         self.conn = conn

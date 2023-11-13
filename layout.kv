@@ -19,7 +19,7 @@
             title: "SpareApp"
             title_color: "#FFFFFF"
             source: "assets/sapre_app_launcher.png"
-            text: "v1.0"
+            text: f"v{app.version}"
             text_color: "#005B41"
             spacing: dp(4)
             padding: [dp(12), dp(6), dp(12), dp(6)]
@@ -131,7 +131,6 @@ MDScreen:
                 pos_hint: {"center_x": .5, "center_y": .30}
                 on_press:
                     root_screen_manager.current = 'signup'
-
         MDScreen:
             name: "signup"
             MDRelativeLayout:
@@ -170,13 +169,14 @@ MDScreen:
                 on_press:
                     root_screen_manager.transition.direction = 'right'
                     root_screen_manager.current = 'login'
+        
         MDScreen:
             name: "logged"
+
             MDTopAppBar:
                 title: screen_manager.current
                 pos_hint: {"top": 1}
-                size_hint_y: None
-                height: dp(40)
+                elevation: 4
                 md_bg_color: "232D3F"
                 specific_text_color: "#008170"
                 left_action_items:
@@ -185,187 +185,31 @@ MDScreen:
                     [['logout', lambda x: app.logout()]]
 
             MDNavigationLayout:
+            
+                ScreenManager:
+                    id: screen_manager
 
-            MDScreenManager:
-                id: screen_manager
-
-                MDScreen:
-                    name: "Dashboard"
-                    MDGridLayout:
-                        cols: 1
-                        rows: 6
-                        pos_hint: {"center_x": 0.5, "center_y": 0.5}
-                        size_hint_x: 0.8
-                        size_hint_y: None
-                        height: dp(400)
-                        md_bg_color: "232D3F"
-                        spacing: dp(10), dp(20)
-                        MDLabel:
-                            md_bg_color: "005B41"
-                            text: "Savings"
-                            font_name: "assets/Quicksand"
-                            halign: "center"
-                            size_hint_y: None
-                            height: dp(50)
-                            font_style: "H5"
-                        MDLabel:
-                            id: remaining_budget
-                            text: ""
-                            font_name: "assets/Quicksand"
-                            size_hint_y: None
-                            height: dp(80)
-                            halign: "center"
-                            font_style: "H2"
-                        MDLabel:
-                            id: direct_saving_label
-                            text: ""
-                            font_name: "assets/Quicksand"
-                            halign: "center"
-                            size_hint_y: None
-                            height: dp(30)
-                        MDLabel:
-                            md_bg_color: "005B41"
-                            text: "Remaining Budgets"
-                            font_name: "assets/Quicksand"
-                            halign: "center"
-                            size_hint_y: None
-                            height: dp(50)
-                            font_style: "H5"
+                    MDScreen:
+                        name: "Dashboard"
                         MDGridLayout:
-                            cols: 4
-                            rows: 2
-                            adaptive_height: True
+                            cols: 1
+                            rows: 6
                             pos_hint: {"center_x": 0.5, "center_y": 0.5}
                             size_hint_x: 0.8
-                            md_bg_color: "232D3F"
-                            MDLabel:
-                                text: "Food"
-                                font_name: "assets/Quicksand"
-                                halign: "center"
-                                size_hint_y: None
-                                height: dp(25)
-                            MDLabel:
-                                text: "Travel"
-                                font_name: "assets/Quicksand"
-                                halign: "center"
-                                size_hint_y: None
-                                height: dp(25)
-                            MDLabel:
-                                text: "Utilities"
-                                font_name: "assets/Quicksand"
-                                halign: "center"
-                                size_hint_y: None
-                                height: dp(25)
-                            MDLabel:
-                                text: "Personal"
-                                font_name: "assets/Quicksand"
-                                halign: "center"
-                                size_hint_y: None
-                                height: dp(25)
-                            MDLabel:
-                                id: food_remaining_budget
-                                text: ""
-                                font_name: "assets/Quicksand"
-                                halign: "center"
-                                size_hint_y: None
-                                height: dp(40)
-                            MDLabel:
-                                id: transportation_remaining_budget
-                                text: ""
-                                font_name: "assets/Quicksand"
-                                halign: "center"
-                                size_hint_y: None
-                                height: dp(40)
-                            MDLabel:
-                                id: utilities_remaining_budget
-                                text: ""
-                                font_name: "assets/Quicksand"
-                                halign: "center"
-                                size_hint_y: None
-                                height: dp(40)
-                            MDLabel:
-                                id: personal_remaining_budget
-                                text: ""
-                                font_name: "assets/Quicksand"
-                                halign: "center"
-                                size_hint_y: None
-                                height: dp(40)
-                        MDFlatButton:
-                            text: "Add Expense"
-                            size_hint_x: 0.5
-                            md_bg_color: app.theme_cls.primary_color
-                            on_press:
-                                screen_manager.transition.direction = 'left'
-                                screen_manager.current = 'Add Expenses'
-                    MDFlatButton:
-                        md_bg_color: app.theme_cls.primary_color
-                        text: "Reset Expenses"
-                        size_hint_x: 0.3
-                        pos_hint: {"center_x": 0.5, "center_y": 0.05}
-                        md_bg_color: "#232D3F"
-                        on_press:
-                            app.remove_expense('tmp')
-
-                MDScreen:
-                    name: "Add Expenses"
-                    MDGridLayout:
-                        cols: 1
-                        rows: 3
-                        pos_hint: {"center_x": 0.5, "center_y": 0.5}
-                        size_hint_x: 0.8
-                        size_hint_y: None
-                        height: dp(174)
-                        md_bg_color: "232D3F"
-                        padding: [dp(12),dp(6),dp(12),dp(12)]
-                        MDTextField:
-                            id: expense_amount
-                            icon_right: "cash-fast"
-                            pos_hint: {"center_x": .5, "center_y": .60}
-                            hint_text: "Expense Amount"
-                            helper_text_mode: "persistent"
-                            input_filter: "float"
-                        MDGridLayout:
-                            id: category_drop
                             size_hint_y: None
-                            height: dp(50)
-                            cols: 1
-                            rows: 1
-                            MDFlatButton:
-                                md_bg_color: app.theme_cls.primary_color
-                                id: category_dropdown_button
-                                text: "Select a Category"
-                                size_hint_x: 1
-                                on_release: app.category_menu()
-                        MDFlatButton:
-                            md_bg_color: app.theme_cls.primary_color
-                            text: "Add Expense"
-                            size_hint_x: 0.5
-                            on_press:
-                                app.store_expense('expense_amount')
-
-                MDScreen:
-                    name: "Manage Incomes"
-                    ScrollView:
-                        pos_hint: {"center_x": 0.5, "center_y": 0.45}
-                        size_hint: (0.8, 0.8)
-                        MDGridLayout:
-                            cols: 1
-                            rows: 7
-                            size_hint_y: None
-                            height: dp(660)
-                            size_hint_x: 1
+                            height: dp(400)
                             md_bg_color: "232D3F"
-                            spacing: [dp(10), dp(20)]
+                            spacing: dp(10), dp(20)
                             MDLabel:
                                 md_bg_color: "005B41"
-                                text: "Current Income"
+                                text: "Savings"
                                 font_name: "assets/Quicksand"
                                 halign: "center"
                                 size_hint_y: None
                                 height: dp(50)
                                 font_style: "H5"
                             MDLabel:
-                                id: current_income
+                                id: remaining_budget
                                 text: ""
                                 font_name: "assets/Quicksand"
                                 size_hint_y: None
@@ -373,48 +217,244 @@ MDScreen:
                                 halign: "center"
                                 font_style: "H2"
                             MDLabel:
-                                id: current_savings
-                                text: "(Savings: 0%)"
+                                id: direct_saving_label
+                                text: ""
                                 font_name: "assets/Quicksand"
                                 halign: "center"
                                 size_hint_y: None
                                 height: dp(30)
-                                font_style: "H6"
-                            MDGridLayout:
-                                cols: 2
-                                rows: 1
-                                adaptive_height: True
-                                size_hint_x: 1
-                                md_bg_color: "232D3F"
-                                spacing: [dp(12), 0]
-                                MDFlatButton:
-                                    md_bg_color: app.theme_cls.primary_color
-                                    text: "Manage Savings"
-                                    size_hint_x: 0.5
-                                    on_press:
-                                        screen_manager.transition.direction = "left"
-                                        screen_manager.current = 'Manage Savings'
-                                MDFlatButton:
-                                    md_bg_color: app.theme_cls.primary_color
-                                    text: "Update Income"
-                                    size_hint_x: 0.5
-                                    on_press:
-                                        screen_manager.transition.direction = 'left'
-                                        screen_manager.current = 'Update Income'
                             MDLabel:
                                 md_bg_color: "005B41"
-                                text: "Recurring Expenses"
+                                text: "Remaining Budgets"
                                 font_name: "assets/Quicksand"
                                 halign: "center"
                                 size_hint_y: None
                                 height: dp(50)
                                 font_style: "H5"
                             MDGridLayout:
-                                id: incomes_data_layout
+                                cols: 4
+                                rows: 2
+                                adaptive_height: True
+                                pos_hint: {"center_x": 0.5, "center_y": 0.5}
+                                size_hint_x: 0.8
+                                md_bg_color: "232D3F"
+                                MDLabel:
+                                    text: "Food"
+                                    font_name: "assets/Quicksand"
+                                    halign: "center"
+                                    size_hint_y: None
+                                    height: dp(25)
+                                MDLabel:
+                                    text: "Travel"
+                                    font_name: "assets/Quicksand"
+                                    halign: "center"
+                                    size_hint_y: None
+                                    height: dp(25)
+                                MDLabel:
+                                    text: "Utilities"
+                                    font_name: "assets/Quicksand"
+                                    halign: "center"
+                                    size_hint_y: None
+                                    height: dp(25)
+                                MDLabel:
+                                    text: "Personal"
+                                    font_name: "assets/Quicksand"
+                                    halign: "center"
+                                    size_hint_y: None
+                                    height: dp(25)
+                                MDLabel:
+                                    id: food_remaining_budget
+                                    text: ""
+                                    font_name: "assets/Quicksand"
+                                    halign: "center"
+                                    size_hint_y: None
+                                    height: dp(40)
+                                MDLabel:
+                                    id: transportation_remaining_budget
+                                    text: ""
+                                    font_name: "assets/Quicksand"
+                                    halign: "center"
+                                    size_hint_y: None
+                                    height: dp(40)
+                                MDLabel:
+                                    id: utilities_remaining_budget
+                                    text: ""
+                                    font_name: "assets/Quicksand"
+                                    halign: "center"
+                                    size_hint_y: None
+                                    height: dp(40)
+                                MDLabel:
+                                    id: personal_remaining_budget
+                                    text: ""
+                                    font_name: "assets/Quicksand"
+                                    halign: "center"
+                                    size_hint_y: None
+                                    height: dp(40)
+                            MDFlatButton:
+                                text: "Add Expense"
+                                size_hint_x: 0.5
+                                md_bg_color: app.theme_cls.primary_color
+                                on_press:
+                                    screen_manager.transition.direction = 'left'
+                                    screen_manager.current = 'Add Expenses'
+                        MDFlatButton:
+                            md_bg_color: app.theme_cls.primary_color
+                            text: "Reset Expenses"
+                            size_hint_x: 0.3
+                            pos_hint: {"center_x": 0.5, "center_y": 0.05}
+                            md_bg_color: "#232D3F"
+                            on_press:
+                                app.remove_expense('tmp')
+
+                    MDScreen:
+                        name: "Add Expenses"
+                        MDGridLayout:
+                            cols: 1
+                            rows: 3
+                            pos_hint: {"center_x": 0.5, "center_y": 0.5}
+                            size_hint_x: 0.8
+                            size_hint_y: None
+                            height: dp(174)
+                            md_bg_color: "232D3F"
+                            padding: [dp(12),dp(6),dp(12),dp(12)]
+                            MDTextField:
+                                id: expense_amount
+                                icon_right: "cash-fast"
+                                pos_hint: {"center_x": .5, "center_y": .60}
+                                hint_text: "Expense Amount"
+                                helper_text_mode: "persistent"
+                                input_filter: "float"
+                            MDGridLayout:
+                                id: category_drop
                                 size_hint_y: None
-                                height: dp(250)
+                                height: dp(50)
                                 cols: 1
                                 rows: 1
+                                MDFlatButton:
+                                    md_bg_color: app.theme_cls.primary_color
+                                    id: category_dropdown_button
+                                    text: "Select a Category"
+                                    size_hint_x: 1
+                                    on_release: app.category_menu()
+                            MDFlatButton:
+                                md_bg_color: app.theme_cls.primary_color
+                                text: "Add Expense"
+                                size_hint_x: 0.5
+                                on_press:
+                                    app.store_expense('expense_amount')
+
+                    MDScreen:
+                        name: "Manage Incomes"
+                        ScrollView:
+                            pos_hint: {"center_x": 0.5, "center_y": 0.45}
+                            size_hint: (0.8, 0.8)
+                            MDGridLayout:
+                                cols: 1
+                                rows: 7
+                                size_hint_y: None
+                                height: dp(660)
+                                size_hint_x: 1
+                                md_bg_color: "232D3F"
+                                spacing: [dp(10), dp(20)]
+                                MDLabel:
+                                    md_bg_color: "005B41"
+                                    text: "Current Income"
+                                    font_name: "assets/Quicksand"
+                                    halign: "center"
+                                    size_hint_y: None
+                                    height: dp(50)
+                                    font_style: "H5"
+                                MDLabel:
+                                    id: current_income
+                                    text: ""
+                                    font_name: "assets/Quicksand"
+                                    size_hint_y: None
+                                    height: dp(80)
+                                    halign: "center"
+                                    font_style: "H2"
+                                MDLabel:
+                                    id: current_savings
+                                    text: "(Savings: 0%)"
+                                    font_name: "assets/Quicksand"
+                                    halign: "center"
+                                    size_hint_y: None
+                                    height: dp(30)
+                                    font_style: "H6"
+                                MDGridLayout:
+                                    cols: 2
+                                    rows: 1
+                                    adaptive_height: True
+                                    size_hint_x: 1
+                                    md_bg_color: "232D3F"
+                                    spacing: [dp(12), 0]
+                                    MDFlatButton:
+                                        md_bg_color: app.theme_cls.primary_color
+                                        text: "Manage Savings"
+                                        size_hint_x: 0.5
+                                        on_press:
+                                            screen_manager.transition.direction = "left"
+                                            screen_manager.current = 'Manage Savings'
+                                    MDFlatButton:
+                                        md_bg_color: app.theme_cls.primary_color
+                                        text: "Update Income"
+                                        size_hint_x: 0.5
+                                        on_press:
+                                            screen_manager.transition.direction = 'left'
+                                            screen_manager.current = 'Update Income'
+                                MDLabel:
+                                    md_bg_color: "005B41"
+                                    text: "Recurring Expenses"
+                                    font_name: "assets/Quicksand"
+                                    halign: "center"
+                                    size_hint_y: None
+                                    height: dp(50)
+                                    font_style: "H5"
+                                MDGridLayout:
+                                    id: incomes_data_layout
+                                    size_hint_y: None
+                                    height: dp(250)
+                                    cols: 1
+                                    rows: 1
+                                MDGridLayout:
+                                    cols: 2
+                                    rows: 1
+                                    adaptive_height: True
+                                    size_hint_x: 1
+                                    md_bg_color: "232D3F"
+                                    spacing: [dp(12), 0]
+                                    MDFlatButton:
+                                        md_bg_color: app.theme_cls.primary_color
+                                        text: "Remove Selected"
+                                        size_hint_x: 0.5
+                                        on_press:
+                                            app.remove_expense('recurring')
+                                    MDFlatButton:
+                                        md_bg_color: app.theme_cls.primary_color
+                                        text: "Add new"
+                                        size_hint_x: 0.5
+                                        on_press:
+                                            screen_manager.transition.direction = "left"
+                                            screen_manager.current = 'Add Recurring Expense'
+                    
+                    MDScreen:
+                        name: "Update Income"
+                        MDGridLayout:
+                            cols: 1
+                            rows: 2
+                            pos_hint: {"center_x": 0.5, "center_y": 0.5}
+                            size_hint_x: 0.8
+                            size_hint_y: None
+                            height: dp(120)
+                            md_bg_color: "232D3F"
+                            padding: [dp(12),dp(6),dp(12),dp(12)]
+                            MDTextField:
+                                id: update_income
+                                icon_right: "cash-fast"
+                                pos_hint: {"center_x": .5, "center_y": .60}
+                                hint_text: "Type Your Income"
+                                helper_text_mode: "persistent"
+                                input_filter: "float"
+                                text: ""
                             MDGridLayout:
                                 cols: 2
                                 rows: 1
@@ -424,199 +464,163 @@ MDScreen:
                                 spacing: [dp(12), 0]
                                 MDFlatButton:
                                     md_bg_color: app.theme_cls.primary_color
-                                    text: "Remove Selected"
+                                    text: "Back"
                                     size_hint_x: 0.5
                                     on_press:
-                                        app.remove_expense('recurring')
+                                        screen_manager.transition.direction = 'right'
+                                        screen_manager.current = 'Manage Incomes'
                                 MDFlatButton:
                                     md_bg_color: app.theme_cls.primary_color
-                                    text: "Add new"
+                                    text: "Update"
                                     size_hint_x: 0.5
                                     on_press:
-                                        screen_manager.transition.direction = "left"
-                                        screen_manager.current = 'Add Recurring Expense'
-                MDScreen:
-                    name: "Update Income"
-                    MDGridLayout:
-                        cols: 1
-                        rows: 2
-                        pos_hint: {"center_x": 0.5, "center_y": 0.5}
-                        size_hint_x: 0.8
-                        size_hint_y: None
-                        height: dp(120)
-                        md_bg_color: "232D3F"
-                        padding: [dp(12),dp(6),dp(12),dp(12)]
-                        MDTextField:
-                            id: update_income
-                            icon_right: "cash-fast"
-                            pos_hint: {"center_x": .5, "center_y": .60}
-                            hint_text: "Type Your Income"
-                            helper_text_mode: "persistent"
-                            input_filter: "float"
-                            text: ""
+                                        app.update_income()
+                    
+                    MDScreen:
+                        name: "Manage Savings"
                         MDGridLayout:
-                            cols: 2
-                            rows: 1
-                            adaptive_height: True
-                            size_hint_x: 1
-                            md_bg_color: "232D3F"
-                            spacing: [dp(12), 0]
-                            MDFlatButton:
-                                md_bg_color: app.theme_cls.primary_color
-                                text: "Back"
-                                size_hint_x: 0.5
-                                on_press:
-                                    screen_manager.transition.direction = 'right'
-                                    screen_manager.current = 'Manage Incomes'
-                            MDFlatButton:
-                                md_bg_color: app.theme_cls.primary_color
-                                text: "Update"
-                                size_hint_x: 0.5
-                                on_press:
-                                    app.update_income()
-                MDScreen:
-                    name: "Manage Savings"
-                    MDGridLayout:
-                        cols: 1
-                        rows: 2
-                        pos_hint: {"center_x": 0.5, "center_y": 0.5}
-                        size_hint_x: 0.8
-                        size_hint_y: None
-                        height: dp(120)
-                        md_bg_color: "232D3F"
-                        padding: [dp(12),dp(6),dp(12),dp(12)]
-                        MDTextField:
-                            id: update_savings
-                            icon_right: "cash-plus"
-                            pos_hint: {"center_x": .5, "center_y": .60}
-                            hint_text: "Type the % that you want to keep"
-                            helper_text_mode: "persistent"
-                            input_filter: "float"
-                            text: ""
-                        MDGridLayout:
-                            cols: 2
-                            rows: 1
-                            adaptive_height: True
-                            size_hint_x: 1
-                            md_bg_color: "232D3F"
-                            spacing: [dp(12), 0]
-                            MDFlatButton:
-                                md_bg_color: app.theme_cls.primary_color
-                                text: "Back"
-                                size_hint_x: 0.5
-                                on_press:
-                                    screen_manager.transition.direction = 'right'
-                                    screen_manager.current = 'Manage Incomes'
-                            MDFlatButton:
-                                md_bg_color: app.theme_cls.primary_color
-                                text: "Update"
-                                size_hint_x: 0.5
-                                on_press:
-                                    app.update_savings()                
-                MDScreen:
-                    name: "Add Recurring Expense"
-                    MDGridLayout:
-                        cols: 1
-                        rows: 2
-                        pos_hint: {"center_x": 0.5, "center_y": 0.5}
-                        size_hint_x: 0.8
-                        size_hint_y: None
-                        height: dp(120)
-                        md_bg_color: "232D3F"
-                        padding: [dp(12),dp(6),dp(12),dp(12)]
-                        MDTextField:
-                            id: recurring_expense
-                            icon_right: "cash-fast"
-                            pos_hint: {"center_x": .5, "center_y": .60}
-                            hint_text: "Insert Expense"
-                            helper_text_mode: "persistent"
-                            input_filter: "float"
-                            text: ""
-                        MDGridLayout:
-                            cols: 2
-                            rows: 1
-                            adaptive_height: True
-                            size_hint_x: 1
-                            md_bg_color: "232D3F"
-                            spacing: [dp(12), 0]
-                            MDFlatButton:
-                                md_bg_color: app.theme_cls.primary_color
-                                text: "Back"
-                                size_hint_x: 0.5
-                                on_press:
-                                    screen_manager.transition.direction = 'right'
-                                    screen_manager.current = 'Manage Incomes'
-                            MDFlatButton:
-                                md_bg_color: app.theme_cls.primary_color
-                                text: "Store Expense"
-                                size_hint_x: 0.5
-                                on_press:
-                                    app.store_expense('recurring_expense')
-                MDScreen:
-                    name: "Manage Categories"
-                    MDGridLayout:
-                        cols: 1
-                        rows: 6
-                        pos_hint: {"center_x": 0.5, "center_y": 0.5}
-                        size_hint_x: 0.8
-                        size_hint_y: None
-                        height: dp(360)
-                        md_bg_color: "232D3F"
-                        padding: [dp(12),dp(6),dp(12),dp(12)]
-                        spacing: [0, dp(2)]
-                        MDLabel:
-                            text: "The sum of these fields must be 0 or 100"
-                            halign: "center"
+                            cols: 1
+                            rows: 2
+                            pos_hint: {"center_x": 0.5, "center_y": 0.5}
+                            size_hint_x: 0.8
                             size_hint_y: None
-                            height: dp(40)
-                        MDTextField:
-                            id: food_threshold_field
-                            hint_text: "Food Category Threshold (%)"
-                            helper_text_mode: "persistent"
-                            input_filter: "float"
-                            text: ""
-                        MDTextField:
-                            id: transportation_threshold_field
-                            hint_text: "Travel Category Threshold (%)"
-                            helper_text_mode: "persistent"
-                            input_filter: "float"
-                            text: ""
-                        MDTextField:
-                            id: utilities_threshold_field
-                            hint_text: "Utilities Category Threshold (%)"
-                            helper_text_mode: "persistent"
-                            input_filter: "float"
-                            text: ""
-                        MDTextField:
-                            id: personal_threshold_field
-                            hint_text: "Personal Category Threshold (%)"
-                            helper_text_mode: "persistent"
-                            input_filter: "float"
-                            text: ""
-                        MDFlatButton:
-                            md_bg_color: app.theme_cls.primary_color
-                            text: "Update"
-                            size_hint_x: 1
-                            on_press:
-                                app.update_categories()
-                MDScreen:
-                    name: "Check Expenses"
-                    MDGridLayout:
-                        id: check_expense_data_layout
-                        pos_hint: {"center_x": 0.5, "center_y": 0.5}
-                        size_hint_x: 0.8
-                        size_hint_y: None
-                        height: dp(340)
-                        md_bg_color: "232D3F"
-                        padding: [12,6,12,12]
-                        cols: 1
-                        rows: 1
+                            height: dp(120)
+                            md_bg_color: "232D3F"
+                            padding: [dp(12),dp(6),dp(12),dp(12)]
+                            MDTextField:
+                                id: update_savings
+                                icon_right: "cash-plus"
+                                pos_hint: {"center_x": .5, "center_y": .60}
+                                hint_text: "Type the % that you want to keep"
+                                helper_text_mode: "persistent"
+                                input_filter: "float"
+                                text: ""
+                            MDGridLayout:
+                                cols: 2
+                                rows: 1
+                                adaptive_height: True
+                                size_hint_x: 1
+                                md_bg_color: "232D3F"
+                                spacing: [dp(12), 0]
+                                MDFlatButton:
+                                    md_bg_color: app.theme_cls.primary_color
+                                    text: "Back"
+                                    size_hint_x: 0.5
+                                    on_press:
+                                        screen_manager.transition.direction = 'right'
+                                        screen_manager.current = 'Manage Incomes'
+                                MDFlatButton:
+                                    md_bg_color: app.theme_cls.primary_color
+                                    text: "Update"
+                                    size_hint_x: 0.5
+                                    on_press:
+                                        app.update_savings()                
+                    
+                    MDScreen:
+                        name: "Add Recurring Expense"
+                        MDGridLayout:
+                            cols: 1
+                            rows: 2
+                            pos_hint: {"center_x": 0.5, "center_y": 0.5}
+                            size_hint_x: 0.8
+                            size_hint_y: None
+                            height: dp(120)
+                            md_bg_color: "232D3F"
+                            padding: [dp(12),dp(6),dp(12),dp(12)]
+                            MDTextField:
+                                id: recurring_expense
+                                icon_right: "cash-fast"
+                                pos_hint: {"center_x": .5, "center_y": .60}
+                                hint_text: "Insert Expense"
+                                helper_text_mode: "persistent"
+                                input_filter: "float"
+                                text: ""
+                            MDGridLayout:
+                                cols: 2
+                                rows: 1
+                                adaptive_height: True
+                                size_hint_x: 1
+                                md_bg_color: "232D3F"
+                                spacing: [dp(12), 0]
+                                MDFlatButton:
+                                    md_bg_color: app.theme_cls.primary_color
+                                    text: "Back"
+                                    size_hint_x: 0.5
+                                    on_press:
+                                        screen_manager.transition.direction = 'right'
+                                        screen_manager.current = 'Manage Incomes'
+                                MDFlatButton:
+                                    md_bg_color: app.theme_cls.primary_color
+                                    text: "Store Expense"
+                                    size_hint_x: 0.5
+                                    on_press:
+                                        app.store_expense('recurring_expense')
+                    
+                    MDScreen:
+                        name: "Manage Categories"
+                        MDGridLayout:
+                            cols: 1
+                            rows: 6
+                            pos_hint: {"center_x": 0.5, "center_y": 0.5}
+                            size_hint_x: 0.8
+                            size_hint_y: None
+                            height: dp(360)
+                            md_bg_color: "232D3F"
+                            padding: [dp(12),dp(6),dp(12),dp(12)]
+                            spacing: [0, dp(2)]
+                            MDLabel:
+                                text: "The sum of these fields must be 0 or 100"
+                                halign: "center"
+                                size_hint_y: None
+                                height: dp(40)
+                            MDTextField:
+                                id: food_threshold_field
+                                hint_text: "Food Category Threshold (%)"
+                                helper_text_mode: "persistent"
+                                input_filter: "float"
+                                text: ""
+                            MDTextField:
+                                id: transportation_threshold_field
+                                hint_text: "Travel Category Threshold (%)"
+                                helper_text_mode: "persistent"
+                                input_filter: "float"
+                                text: ""
+                            MDTextField:
+                                id: utilities_threshold_field
+                                hint_text: "Utilities Category Threshold (%)"
+                                helper_text_mode: "persistent"
+                                input_filter: "float"
+                                text: ""
+                            MDTextField:
+                                id: personal_threshold_field
+                                hint_text: "Personal Category Threshold (%)"
+                                helper_text_mode: "persistent"
+                                input_filter: "float"
+                                text: ""
+                            MDFlatButton:
+                                md_bg_color: app.theme_cls.primary_color
+                                text: "Update"
+                                size_hint_x: 1
+                                on_press:
+                                    app.update_categories()
+                    
+                    MDScreen:
+                        name: "Check Expenses"
+                        MDGridLayout:
+                            id: check_expense_data_layout
+                            pos_hint: {"center_x": 0.5, "center_y": 0.5}
+                            size_hint_x: 0.8
+                            size_hint_y: None
+                            height: dp(340)
+                            md_bg_color: "232D3F"
+                            padding: [12,6,12,12]
+                            cols: 1
+                            rows: 1
 
-            MDNavigationDrawer:
-                id: nav_drawer
-                radius: (0, 16, 16, 0)
+                MDNavigationDrawer:
+                    id: nav_drawer
 
-                ContentNavigationDrawer:
-                    screen_manager: screen_manager
-                    nav_drawer: nav_drawer
-                    id: main_menu
+                    ContentNavigationDrawer:
+                        screen_manager: screen_manager
+                        nav_drawer: nav_drawer
+                        id: main_menu
