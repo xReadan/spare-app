@@ -218,12 +218,17 @@ def get_category(app: MDApp, category_id: int) -> str:
     return "None"
 
 
-def create_expense_tables_data(app: MDApp, expenses: list) -> list:
+def create_expense_tables_data(app: MDApp, expenses: list, type: str) -> list:
     if app.user is None:
         return []
     table_data = []
     for expense in expenses:
-        table_data.append([expense[0], get_category(app, expense[3]), expense[2]])
+        if type == "temp":
+            table_data.append(
+                [expense[0], expense[1], get_category(app, expense[3]), expense[2]]
+            )
+        else:
+            table_data.append([expense[0], get_category(app, expense[3]), expense[2]])
     return table_data
 
 
@@ -236,8 +241,9 @@ def fetch_user_data(app: MDApp) -> dict:
         "temp_expenses": [],
         "income": "0€",
         "net_income": 0,
-        "savings": "(Current Savings: 0%)",
         "net_savings": 0,
+        "savings": "(Current Savings: 0%)",
+        "savings_threshold": 0,
         "categories": [],
         "category_budgets": {
             "Food": 0,
@@ -247,83 +253,89 @@ def fetch_user_data(app: MDApp) -> dict:
         },
     }
     if app.user is not None:
-        # Get net income
-        net_income_query = f"SELECT * FROM incomes WHERE user_id = {app.user[0]}"
-        income = app.cursor.execute(net_income_query).fetchone()
-        if income is not None:
-            user_data["income"] = f"{income[1]}€"
-            user_data["net_income"] = income[1]
-        # Get savings
-        net_savings_query = f"SELECT * FROM savings WHERE user_id = {app.user[0]}"
-        net_savings = app.cursor.execute(net_savings_query).fetchone()
-        if net_savings is not None:
-            user_data["savings"] = f"(Current Savings: {net_savings[1]}%)"
-            user_data["net_savings"] = net_savings[1]
-        else:
-            user_data["net_savings"] = 0
-        # Get Recurring expenses
-        r_expense_query = (
-            f"SELECT * FROM expenses WHERE user_id = {app.user[0]} AND recurring = 1"
-        )
-        r_expense = app.cursor.execute(r_expense_query).fetchall()
-        user_data["recurring_expenses"] = [
-            [tmp[0], tmp[1], tmp[2], tmp[3]] for tmp in r_expense
-        ]
-        # Get Temp expenses
-        t_expense_query = (
-            f"SELECT * FROM expenses WHERE user_id = {app.user[0]} AND recurring = 0"
-        )
-        t_expense = app.cursor.execute(t_expense_query).fetchall()
-        user_data["temp_expenses"] = [
-            [tmp[0], tmp[1], tmp[2], tmp[3]] for tmp in t_expense
-        ]
-        # Get categories
-        categories_query = f"SELECT * FROM categories WHERE user_id = {app.user[0]}"
-        user_data["categories"] = app.cursor.execute(categories_query).fetchall()
-        # If categories are not initialized, create them
-        if len(user_data["categories"]) == 0:
-            for category in DEFAULT_CATEGORIES:
-                save_category(app, category, 0)
-            # Fetch again
-            user_data["categories"] = app.cursor.execute(categories_query).fetchall()
+        user_data.update(retrieve_user_raw_data(app))
         # Update budget
         recurring_sum = sum([tmp[2] for tmp in user_data["recurring_expenses"]])
         temp_sum = sum([tmp[2] for tmp in user_data["temp_expenses"]])
+        # Remove recurring expenses from income and update net budget
+        user_data["net_budget"] = user_data["net_income"] - recurring_sum
         # Check if the user has savings option set
-        if user_data["net_savings"] > 0:
+        if user_data["savings_threshold"] > 0:
             # Update net budget
-            user_data["net_budget"] = (
-                user_data["net_income"]
-                - (user_data["net_income"] * (user_data["net_savings"] / 100))
-            ) - (recurring_sum + temp_sum)
-            #
-        else:
-            user_data["net_budget"] = user_data["net_income"] - (
-                recurring_sum + temp_sum
+            user_data["net_savings"] = user_data["net_budget"] * (
+                user_data["savings_threshold"] / 100
             )
-        user_data["budget"] = f"{user_data['net_budget']}€"
+            user_data["net_budget"] -= user_data["net_savings"]
+
         # Update category budgets
         for category in DEFAULT_CATEGORIES:
-            # Get remaining budgets
-            raw_income = (
-                user_data["net_income"]
-                - (user_data["net_income"] * (user_data["net_savings"] / 100))
-                - recurring_sum
-            )
-            # Init sum
-            category_sum = 0
             # Get the id of the category
             category_element = [
                 element for element in user_data["categories"] if element[1] == category
             ][0]
             if category_element[2] > 0:
-                for expense in user_data["temp_expenses"]:
-                    if expense[3] == category_element[0]:
-                        category_sum += float(expense[2])
                 # Compute budget
-                user_data["category_budgets"][category] = (
-                    raw_income * (category_element[2] / 100)
-                ) - category_sum
+                user_data["category_budgets"][category] = user_data["net_budget"] * (
+                    category_element[2] / 100
+                )
+        # Remove monthly expenses
+        for expense in user_data["temp_expenses"]:
+            # Get category
+            expense_category = get_category(app, expense[3])
+            # Update budget
+            user_data["category_budgets"][expense_category] -= expense[2]
+            user_data["net_budget"] -= expense[2]
+        # Check
+        assert (
+            user_data["net_budget"]
+            + recurring_sum
+            + temp_sum
+            + user_data["net_savings"]
+            == user_data["net_income"]
+        )
+        # Update budget text
+        user_data["budget"] = f"{user_data['net_budget']}€"
+    return user_data
+
+
+def retrieve_user_raw_data(app: MDApp) -> dict:
+    user_data = {}
+    # Get net income
+    net_income_query = f"SELECT * FROM incomes WHERE user_id = {app.user[0]}"
+    income = app.cursor.execute(net_income_query).fetchone()
+    if income is not None:
+        user_data["income"] = f"{income[1]}€"
+        user_data["net_income"] = income[1]
+    # Get savings
+    net_savings_query = f"SELECT * FROM savings WHERE user_id = {app.user[0]}"
+    net_savings = app.cursor.execute(net_savings_query).fetchone()
+    if net_savings is not None:
+        user_data["savings_threshold"] = net_savings[1]
+    else:
+        user_data["net_savings"] = 0
+    # Get Recurring expenses
+    r_expense_query = (
+        f"SELECT * FROM expenses WHERE user_id = {app.user[0]} AND recurring = 1"
+    )
+    r_expense = app.cursor.execute(r_expense_query).fetchall()
+    user_data["recurring_expenses"] = [
+        [tmp[0], tmp[1], tmp[2], tmp[3]] for tmp in r_expense
+    ]
+    # Get Temp expenses
+    t_expense_query = (
+        f"SELECT * FROM expenses WHERE user_id = {app.user[0]} AND recurring = 0"
+    )
+    t_expense = app.cursor.execute(t_expense_query).fetchall()
+    user_data["temp_expenses"] = [[tmp[0], tmp[1], tmp[2], tmp[3]] for tmp in t_expense]
+    # Get categories
+    categories_query = f"SELECT * FROM categories WHERE user_id = {app.user[0]}"
+    user_data["categories"] = app.cursor.execute(categories_query).fetchall()
+    # If categories are not initialized, create them
+    if len(user_data["categories"]) == 0:
+        for category in DEFAULT_CATEGORIES:
+            save_category(app, category, 0)
+        # Fetch again
+        user_data["categories"] = app.cursor.execute(categories_query).fetchall()
     return user_data
 
 

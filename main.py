@@ -24,6 +24,7 @@ COLORS: https://colorhunt.co/palette/0f0f0f232d3f005b41008170
 
 __version__ = "1.0"
 
+
 class ContentNavigationDrawer(MDBoxLayout):
     screen_manager = ObjectProperty()
     nav_drawer = ObjectProperty()
@@ -219,17 +220,13 @@ class MainApp(MDApp):
     def update_app_text(self):
         # Fetch new data
         self.user_data = fetch_user_data(self)
-        # Get net savings
-        net_savings = self.user_data["net_income"] * (
-            self.user_data["net_savings"] / 100
-        )
         # Update text
         self.root.ids.remaining_budget.text = (
-            f"{self.user_data['net_budget'] + net_savings}€"
+            f"{self.user_data['net_budget'] + self.user_data['net_savings']}€"
         )
         self.root.ids.current_income.text = self.user_data["income"]
         self.root.ids.current_savings.text = self.user_data["savings"]
-        self.root.ids.direct_saving_label.text = f"({net_savings} are direct savings)"
+        self.root.ids.direct_saving_label.text = f"({self.user_data['net_savings']} are direct savings)"
         # Update categories
         for catgory in self.user_data["categories"]:
             # Update input fields
@@ -251,7 +248,7 @@ class MainApp(MDApp):
     def create_recurring_expense_table(self):
         # Translate expense
         expense_data = create_expense_tables_data(
-            self, self.user_data["recurring_expenses"]
+            self, self.user_data["recurring_expenses"], type="recurring"
         )
         # Create tables
         self.recurring_expenses_table = MDDataTable(
@@ -264,11 +261,16 @@ class MainApp(MDApp):
 
     def create_check_expense_table(self):
         # Translate expense
-        expense_data = create_expense_tables_data(self, self.user_data["temp_expenses"])
+        expense_data = create_expense_tables_data(self, self.user_data["temp_expenses"], type="temp")
         # Create tables
         self.check_expense_table = MDDataTable(
             check=False,
-            column_data=[("ID", dp(20)), ("Category", dp(50)), ("Amount", dp(40))],
+            column_data=[
+                ("ID", dp(10)),
+                ("Date", dp(40)),
+                ("Category", dp(30)),
+                ("Amount", dp(20)),
+            ],
             row_data=expense_data,
         )
         # Add widget

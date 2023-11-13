@@ -7,10 +7,10 @@
 
 <MDNavigationDrawerLabel@MDNavigationDrawerItem>
     md_bg_color: "#005B41"
-    padding: [12, 6, 12, 6]
-    margin: [0, 0, 0, 6]
-    radius: 12
-    spacing: "4dp"
+    padding: [dp(12), dp(6), dp(12), dp(6)]
+    margin: [0, 0, 0, dp(6)]
+    radius: dp(12)
+    spacing: dp(4)
 
 <ContentNavigationDrawer>
     MDNavigationDrawerMenu:
@@ -21,8 +21,8 @@
             source: "assets/sapre_app_launcher.png"
             text: "v1.0"
             text_color: "#005B41"
-            spacing: "4dp"
-            padding: "12dp", "6pd", "6pd", "12dp"
+            spacing: dp(4)
+            padding: [dp(12), dp(6), dp(12), dp(6)]
 
         MDNavigationDrawerDivider:
 
@@ -175,7 +175,8 @@ MDScreen:
             MDTopAppBar:
                 title: screen_manager.current
                 pos_hint: {"top": 1}
-                size_hint_y: 0.105
+                size_hint_y: None
+                height: dp(40)
                 md_bg_color: "232D3F"
                 specific_text_color: "#008170"
                 left_action_items:
@@ -311,12 +312,11 @@ MDScreen:
                         cols: 1
                         rows: 3
                         pos_hint: {"center_x": 0.5, "center_y": 0.5}
-                        size_hint_x: None
+                        size_hint_x: 0.8
                         size_hint_y: None
-                        width: dp(300)
-                        height: dp(230)
+                        height: dp(174)
                         md_bg_color: "232D3F"
-                        padding: [12,6,12,12]
+                        padding: [dp(12),dp(6),dp(12),dp(12)]
                         MDTextField:
                             id: expense_amount
                             icon_right: "cash-fast"
@@ -327,6 +327,7 @@ MDScreen:
                         MDGridLayout:
                             id: category_drop
                             size_hint_y: None
+                            height: dp(50)
                             cols: 1
                             rows: 1
                             MDFlatButton:
@@ -351,10 +352,10 @@ MDScreen:
                             cols: 1
                             rows: 7
                             size_hint_y: None
-                            height: dp(650)
+                            height: dp(660)
                             size_hint_x: 1
                             md_bg_color: "232D3F"
-                            spacing: dp(10), dp(20)
+                            spacing: [dp(10), dp(20)]
                             MDLabel:
                                 md_bg_color: "005B41"
                                 text: "Current Income"
@@ -385,6 +386,7 @@ MDScreen:
                                 adaptive_height: True
                                 size_hint_x: 1
                                 md_bg_color: "232D3F"
+                                spacing: [dp(12), 0]
                                 MDFlatButton:
                                     md_bg_color: app.theme_cls.primary_color
                                     text: "Manage Savings"
@@ -419,6 +421,7 @@ MDScreen:
                                 adaptive_height: True
                                 size_hint_x: 1
                                 md_bg_color: "232D3F"
+                                spacing: [dp(12), 0]
                                 MDFlatButton:
                                     md_bg_color: app.theme_cls.primary_color
                                     text: "Remove Selected"
@@ -442,7 +445,7 @@ MDScreen:
                         size_hint_y: None
                         height: dp(120)
                         md_bg_color: "232D3F"
-                        padding: [12,6,12,12]
+                        padding: [dp(12),dp(6),dp(12),dp(12)]
                         MDTextField:
                             id: update_income
                             icon_right: "cash-fast"
@@ -457,6 +460,7 @@ MDScreen:
                             adaptive_height: True
                             size_hint_x: 1
                             md_bg_color: "232D3F"
+                            spacing: [dp(12), 0]
                             MDFlatButton:
                                 md_bg_color: app.theme_cls.primary_color
                                 text: "Back"
@@ -480,7 +484,7 @@ MDScreen:
                         size_hint_y: None
                         height: dp(120)
                         md_bg_color: "232D3F"
-                        padding: [12,6,12,12]
+                        padding: [dp(12),dp(6),dp(12),dp(12)]
                         MDTextField:
                             id: update_savings
                             icon_right: "cash-plus"
@@ -495,6 +499,7 @@ MDScreen:
                             adaptive_height: True
                             size_hint_x: 1
                             md_bg_color: "232D3F"
+                            spacing: [dp(12), 0]
                             MDFlatButton:
                                 md_bg_color: app.theme_cls.primary_color
                                 text: "Back"
@@ -518,7 +523,7 @@ MDScreen:
                         size_hint_y: None
                         height: dp(120)
                         md_bg_color: "232D3F"
-                        padding: [12,6,12,12]
+                        padding: [dp(12),dp(6),dp(12),dp(12)]
                         MDTextField:
                             id: recurring_expense
                             icon_right: "cash-fast"
@@ -533,6 +538,7 @@ MDScreen:
                             adaptive_height: True
                             size_hint_x: 1
                             md_bg_color: "232D3F"
+                            spacing: [dp(12), 0]
                             MDFlatButton:
                                 md_bg_color: app.theme_cls.primary_color
                                 text: "Back"
@@ -554,14 +560,15 @@ MDScreen:
                         pos_hint: {"center_x": 0.5, "center_y": 0.5}
                         size_hint_x: 0.8
                         size_hint_y: None
-                        height: dp(340)
+                        height: dp(360)
                         md_bg_color: "232D3F"
-                        padding: [12,6,12,12]
+                        padding: [dp(12),dp(6),dp(12),dp(12)]
+                        spacing: [0, dp(2)]
                         MDLabel:
                             text: "The sum of these fields must be 0 or 100"
                             halign: "center"
                             size_hint_y: None
-                            height: 30
+                            height: dp(40)
                         MDTextField:
                             id: food_threshold_field
                             hint_text: "Food Category Threshold (%)"
@@ -589,7 +596,7 @@ MDScreen:
                         MDFlatButton:
                             md_bg_color: app.theme_cls.primary_color
                             text: "Update"
-                            size_hint_x: 0.5
+                            size_hint_x: 1
                             on_press:
                                 app.update_categories()
                 MDScreen:
